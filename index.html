@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link type="text/css" rel="stylesheet" href="./style.css" />
+        <title>One Page Nav Test</title>
+    </head>
+    <body>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="#">Nothing</a></li>
+                <li><a href="#start">Something</a></li>
+                <li><a href="#article-1">Art-1</a></li>
+                <li><a href="#article-2">Art-2</a></li>
+                <li><a href="#article-3">Art-3</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <article id="">Article without ID</article>
+            <article id="start">start</article>
+            <article id="article-1">article-1</article>
+            <article id="placeholder">Part with ID, but without Navi Point</article>
+            <article id="article-2">article-2</article>
+            <article id="article-3">article-3</article>
+        </main>
+
+        <script src="./bg.js"></script>
+        <script src="./onePageNav.js"></script>
+        <script>
+            document.querySelectorAll("article").forEach((el) => setContrast(el));
+
+            let onePage = new onePageNav({
+                showTestLine: true,
+                activeClassesOnSections: true,
+                exactMatch: true,
+                onChange: [
+                    function (active, prev) {
+                        console.log("onChangeCallback");
+                    },
+                ],
+            });
+        </script>
+    </body>
+</html>
