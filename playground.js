@@ -20,7 +20,5 @@ offset.addEventListener("input", () => {
 let defaultActiveAnchor = document.querySelector("input[name=differentActiveAnchor]");
 
 defaultActiveAnchor.addEventListener("input", () => {
-    console.log(defaultActiveAnchor.name);
-    console.log(defaultActiveAnchor.value);
     onePage.set(defaultActiveAnchor.name, defaultActiveAnchor.value);
 });

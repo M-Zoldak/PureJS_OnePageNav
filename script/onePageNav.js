@@ -1,17 +1,18 @@
 /**
  * @options
  * @param {string} selector - Should target navigation "a" node elements e.g. ".main-nav a"
- * @param {string} defaultActiveAnchor - Should target link which gains class Active if none section reached
- * @param {string} navigationActiveClass - class that should be added on navigarion link when section reached
- * @param {string} articleActiveClass - class that should be added on section when section reached
- * @param {int} changeOffset - element distance from top in precents, to set next section as active (0-100)%
- * @param {boolean} classOnAnchorTag - class will be set at Anchors - default false
- * @param {boolean} defaultLinkActive - if no section was reached, default settet or first link will gain class active - should be off with exact matching
- * @param {boolean} setClassesOnSections - if true, section reached will gain class active
- * @param {boolean} exactMatch - set class only if offset place is between begin and end of section
- * @param {array} parentsObtainingActiveClass - array with selectors of closest(s) nodes, where class 'active' should be added or removed on change
- * @param {array} allowedPaths - List of paths, where script will be evaluated e.g ['', '/', '/start']
+ * @param {string} defaultActiveAnchor - Should target link which will gain class Active if none section reached / active in exactMatch
+ * @param {string} navigationActiveClass - class that should be added on anchor when section reached
+ * @param {string} articleActiveClass - class that should be added on section when reached
+ * @param {int} changeOffset -distance from top to be reached through next element to change active item. Value given in precents (0-100)% - default (50)
+ * @param {boolean} classOnAnchorTag - class will be set at Anchors - default (true)
+ * @param {boolean} defaultLinkActive - if no section was reached, default settet at defaultActiveAnchor or first link from list will gain class active
+ * @param {boolean} setClassesOnSections - if true, reached/active section will gain class active
+ * @param {boolean} exactMatch - set class only if offset place is between begin and end of section else default link or none
+ * @param {array} parentsObtainingActiveClass - array with selectors of closest(selector) nodes, where class 'active' should be added or removed on change
+ * @param {array} allowedPaths - List of paths, where script will be evaluated e.g ['', '/', '/start'], default empty - evaluated on every site
  * @param {array} onChange - array of functions, that should be fired on change fe. [function1, function2], function becomes two parameters: callback(activeArticle, previousArticle)
+ * @param {boolean} debugLine - debug line
  */
 class onePageNav {
     defaultLinkActive;
@@ -21,9 +22,9 @@ class onePageNav {
     changeOffset;
     parentsObtainingActiveClass;
     setClassesOnSections;
-    showTestLine;
     exactMatch;
     allowedPaths;
+    debugLine;
 
     navigationActiveClass;
     articleActiveClass;
@@ -34,12 +35,12 @@ class onePageNav {
     linksInNav = [];
     articles = [];
 
-    testLines = [];
+    debugLines = [];
     listeners = [];
 
     onChange = [];
 
-    constructor({ selector = "nav a", defaultLinkActive = true, classOnAnchorTag = true, changeOffset = 50, parentsObtainingActiveClass = [], setClassesOnSections = false, showTestLine = false, exactMatch = false, allowedPaths = undefined, navigationActiveClass = "active", articleActiveClass = "active", onChange = [], differentActiveAnchor = undefined } = {}) {
+    constructor({ selector = "nav a", defaultLinkActive = true, classOnAnchorTag = true, changeOffset = 50, parentsObtainingActiveClass = [], setClassesOnSections = false, debugLine = false, exactMatch = false, allowedPaths = undefined, navigationActiveClass = "active", articleActiveClass = "active", onChange = [], differentActiveAnchor = undefined } = {}) {
         this.linksInNav = [...document.querySelectorAll(selector)];
 
         if (!this.linksInNav.length) {
@@ -52,7 +53,7 @@ class onePageNav {
         this.changeOffset = changeOffset;
         this.parentsObtainingActiveClass = parentsObtainingActiveClass;
         this.setClassesOnSections = setClassesOnSections;
-        this.showTestLine = showTestLine;
+        this.debugLine = debugLine;
         this.exactMatch = exactMatch;
         this.allowedPaths = allowedPaths;
         this.navigationActiveClass = navigationActiveClass;
@@ -73,7 +74,7 @@ class onePageNav {
         // Initialisiert sich nur auf Hauptseite - es ist nicht ganz so gute Idee(/start, /startseite)
         if (this.allowedPaths && !this.allowedPaths.includes(document.location.pathname)) return;
 
-        this.handleDefaultLinkActive(this.currentArticle);
+        this.handleDefaultLinkActive();
 
         this.articles = this.findRelatedArticles();
         if (!this.articles.length) {
@@ -81,7 +82,7 @@ class onePageNav {
             return;
         }
 
-        this.handleTestLine();
+        this.handleDebugLine();
         this.handleScrollListener();
         this.handleOutput();
     };
@@ -129,10 +130,6 @@ class onePageNav {
         }
     }
 
-    articleChanged() {
-        return this.currentArticle != this.previousArticle;
-    }
-
     clearClasses() {
         this.linksInNav.forEach((link) => {
             this.removeActiveClass(link);
@@ -142,16 +139,6 @@ class onePageNav {
             el.classList.remove(this.articleActiveClass);
         });
     }
-
-    removeActiveClass = (el) => {
-        if (this.classOnAnchorTag) {
-            el.classList.remove(this.navigationActiveClass);
-        }
-
-        this.parentsObtainingActiveClass.forEach((parentSelector) => {
-            el.closest(parentSelector).classList.remove(this.navigationActiveClass);
-        });
-    };
 
     handleDefaultLinkActive() {
         if (this.differentActiveAnchor) this.defaultActiveAnchor = document.querySelector(this.differentActiveAnchor);
@@ -191,15 +178,29 @@ class onePageNav {
         });
     };
 
-    handleTestLine = () => {
-        this.testLines.forEach((el) => el.remove());
-        if (this.showTestLine) this.createTestLine();
+    removeActiveClass = (el) => {
+        if (this.classOnAnchorTag) {
+            el.classList.remove(this.navigationActiveClass);
+        }
+
+        this.parentsObtainingActiveClass.forEach((parentSelector) => {
+            el.closest(parentSelector).classList.remove(this.navigationActiveClass);
+        });
     };
 
-    createTestLine = () => {
-        let testLine = document.createElement("div", { className: "testLine" });
-        testLine.setAttribute("style", `position: fixed;width: 100%;background: red;height: 2px;top: calc(${this.changeOffset}% - 1px);`);
-        this.testLines.push(testLine);
-        document.body.appendChild(testLine);
+    articleChanged() {
+        return this.currentArticle != this.previousArticle;
+    }
+
+    handleDebugLine = () => {
+        this.debugLines.forEach((el) => el.remove());
+        if (this.debugLine) this.createDebugLine();
+    };
+
+    createDebugLine = () => {
+        let debugLine = document.createElement("div");
+        debugLine.setAttribute("style", `position: fixed;width: 100%;background: red;height: 2px;top: calc(${this.changeOffset}% - 1px);`);
+        this.debugLines.push(debugLine);
+        document.body.appendChild(debugLine);
     };
 }
