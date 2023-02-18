@@ -11,7 +11,7 @@
         <nav class="main-nav">
             <ul>
                 <li><a href="#">Nothing</a></li>
-                <li><a href="#start">Something</a></li>
+                <li><a href="#start">Start</a></li>
                 <li><a href="#article-1">Art-1</a></li>
                 <li><a href="#article-2">Art-2</a></li>
                 <li><a href="#article-3">Art-3</a></li>
@@ -36,12 +36,16 @@
                 showTestLine: true,
                 activeClassesOnSections: true,
                 exactMatch: true,
-                onChange: [
-                    function (active, prev) {
-                        console.log("onChangeCallback");
-                    },
-                ],
+                onChange: [],
+                changeOffset: 37,
+                defaultLinkActive: true,
+                defaultActiveAnchor: "a[href^='#article-3']",
+                parentsObtainingActiveClass: ["li", "nav"],
+                onChange: [],
+                allowedPaths: ["/"],
             });
+
+            onePage.set("exactMatch", true);
         </script>
     </body>
 </html>

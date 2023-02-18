@@ -1,27 +1,31 @@
 /**
  * @options
  * @param {string} selector - Should target "a" node elements e.g. ".main-nav a"
+ * @param {string} defaultActiveAnchor - Should target link which gains class Active if none section reached
  * @param {string} navigationActiveClass - class that should be added on navigarion link when section reached
  * @param {string} articleActiveClass - class that should be added on section when section reached
  * @param {int} changeOffset - element distance from top in precents, to set next section as active (0-100)%
  * @param {boolean} classOnAnchorTag - class will be set at Anchors - default false
- * @param {boolean} firstLinkActive - if no section was reached, first link will gain class active ( better not to use with exact matching)
- * @param {boolean} activeClassesOnSections - if true, section reached will gain class active
+ * @param {boolean} defaultLinkActive - if no section was reached, default settet or first link will gain class active - should be off with exact matching
+ * @param {boolean} setClassesOnSections - if true, section reached will gain class active
+ * @param {boolean} exactMatch - set class only if offset place is between begin and end of section
  * @param {array} parentsObtainingActiveClass - array with selectors of closest(s) nodes, where class 'active' should be added or removed on change
  * @param {array} allowedPaths - List of paths, where script will be evaluated e.g ['', '/', '/start']
  * @param {array} onChange - array of functions, that should be fired on change fe. [function1, function2], function becomes two parameters: callback(activeArticle, previousArticle)
  */
 class onePageNav {
-    firstLinkActive;
+    defaultLinkActive;
     classOnAnchorTag;
     changeOffset;
     parentsObtainingActiveClass;
-    activeClassesOnSections;
+    setClassesOnSections;
     showTestLine;
-    allowedPaths = [];
+    exactMatch;
+    allowedPaths;
+    defaultActiveAnchor;
 
-    navigationActiveClass = "active";
-    articleActiveClass = "active";
+    navigationActiveClass;
+    articleActiveClass;
 
     previousArticle;
     currentArticle;
@@ -34,7 +38,7 @@ class onePageNav {
 
     onChange = [];
 
-    constructor({ selector = "nav a", firstLinkActive = false, classOnAnchorTag = true, changeOffset = 50, parentsObtainingActiveClass = [], activeClassesOnSections = false, showTestLine = false, allowedPaths = undefined, navigationActiveClass = "active", articleActiveClass = "active", onChange = [] } = {}) {
+    constructor({ selector = "nav a", defaultLinkActive = false, classOnAnchorTag = true, changeOffset = 50, parentsObtainingActiveClass = [], setClassesOnSections = false, showTestLine = false, exactMatch = false, allowedPaths = undefined, navigationActiveClass = "active", articleActiveClass = "active", onChange = [], defaultActiveAnchor = undefined } = {}) {
         this.linksInNav = [...document.querySelectorAll(selector)];
 
         if (!this.linksInNav.length) {
@@ -42,18 +46,18 @@ class onePageNav {
             return;
         }
 
-        this.firstLinkActive = firstLinkActive;
+        this.defaultLinkActive = defaultLinkActive;
         this.classOnAnchorTag = classOnAnchorTag;
         this.changeOffset = changeOffset;
         this.parentsObtainingActiveClass = parentsObtainingActiveClass;
-        this.activeClassesOnSections = activeClassesOnSections;
+        this.setClassesOnSections = setClassesOnSections;
         this.showTestLine = showTestLine;
+        this.exactMatch = exactMatch;
         this.allowedPaths = allowedPaths;
         this.navigationActiveClass = navigationActiveClass;
         this.articleActiveClass = articleActiveClass;
+        this.defaultActiveAnchor = document.querySelector(defaultActiveAnchor);
         this.onChange = onChange;
-
-        this.handleFirstLinkActive(this.currentArticle);
 
         this.invoke();
     }
@@ -67,33 +71,38 @@ class onePageNav {
         // Initialisiert sich nur auf Hauptseite - es ist nicht ganz so gute Idee(/start, /startseite)
         if (this.allowedPaths && !this.allowedPaths.includes(document.location.pathname)) return;
 
-        // Zieh raus Hashes gefunden bei links
-        let hashes = this.linksInNav.map((el) => el.hash).filter((el) => el);
+        this.handleDefaultLinkActive(this.currentArticle);
 
-        // Suche nach alle Artikeln, die mit hashes stimmen
-        this.articles = [...document.querySelectorAll(hashes.join(", "))];
+        this.articles = this.findRelatedArticles();
+        if (!this.articles.length) {
+            console.warn("No sections found");
+            return;
+        }
 
         this.handleTestLine();
 
         // First initialize and scrolling function
         this.listeners.forEach((el) => {
-            window.removeEventListener(el);
             console.log(el);
+            removeEventListener(scroll, el);
         });
-        let listener = window.addEventListener("scroll", () => this.setClasses());
+        let listener = window.addEventListener("scroll", () => this.handleOutput());
         this.listeners.push(listener);
 
-        this.setClasses();
+        this.handleOutput();
     };
 
-    setClasses = () => {
-        // Filter items above defined offset
+    findRelatedArticles = () => {
+        let hashes = this.linksInNav.map((el) => el.hash).filter((el) => el);
+        return [...document.querySelectorAll(hashes.join(", "))];
+    };
+
+    handleOutput = () => {
         this.findCurrentArticle();
 
-        // Continue on change only.
-        if (this.currentArticleChanged()) {
+        if (this.articleChanged()) {
             this.clearClasses();
-            this.handleFirstLinkActive(this.currentArticle);
+            this.handleDefaultLinkActive();
 
             this.handleCallbacks();
 
@@ -106,10 +115,17 @@ class onePageNav {
 
     findCurrentArticle() {
         this.previousArticle = this.currentArticle;
-        this.currentArticle = this.articles.filter((el) => el.offsetTop < window.scrollY + window.innerHeight / (100 / this.changeOffset)).at(-1);
+        let tempCurrent = this.articles.filter((el) => el.offsetTop < window.scrollY + window.innerHeight / (100 / this.changeOffset)).at(-1);
+
+        if (!this.exactMatch) this.currentArticle = tempCurrent;
+        else if (tempCurrent) {
+            this.currentArticle = tempCurrent.offsetHeight + tempCurrent.offsetTop > window.scrollY + window.innerHeight / (100 / this.changeOffset) ? tempCurrent : this.handleDefaultLinkActive();
+        } else {
+            this.currentArticle = undefined;
+        }
     }
 
-    currentArticleChanged() {
+    articleChanged() {
         return this.currentArticle != this.previousArticle;
     }
 
@@ -118,20 +134,27 @@ class onePageNav {
             this.removeActiveClass(link);
         });
 
-        this.articles.forEach((el) => el.classList.remove("active"));
+        this.articles.forEach((el) => {
+            el.classList.remove(this.articleActiveClass);
+        });
     }
 
-    handleFirstLinkActive() {
-        if (this.currentArticle == undefined && this.firstLinkActive) this.addActiveClass(this.linksInNav[0]);
-    }
+    removeActiveClass = (el) => {
+        if (this.classOnAnchorTag) {
+            el.classList.remove(this.navigationActiveClass);
+        }
 
-    handleArticleClasses() {
-        if (this.activeClassesOnSections) this.currentArticle.classList.add("active");
-    }
+        this.parentsObtainingActiveClass.forEach((parentSelector) => {
+            el.closest(parentSelector).classList.remove(this.navigationActiveClass);
+        });
+    };
 
-    addActiveClassesOnNavigationLinks() {
-        let currentlyActiveLinks = this.findLinksWithHashEqualToCurrentArticleId(this.linksInNav, this.currentArticle.id);
-        currentlyActiveLinks.forEach((activeLink) => this.addActiveClass(activeLink));
+    handleDefaultLinkActive() {
+        if (this.currentArticle == undefined && this.defaultLinkActive) {
+            console.log(this.defaultActiveAnchor);
+
+            this.addActiveClass(this.defaultActiveAnchor ?? this.linksInNav[0]);
+        }
     }
 
     handleCallbacks() {
@@ -140,33 +163,34 @@ class onePageNav {
         });
     }
 
-    removeActiveClass = (el) => {
-        if (this.classOnAnchorTag) el.classList.remove("active");
+    handleArticleClasses() {
+        if (this.setClassesOnSections) {
+            this.currentArticle.classList.add(this.articleActiveClass);
+        }
+    }
 
-        this.parentsObtainingActiveClass.forEach((parentSelector) => {
-            el.closest(parentSelector).classList.remove("active");
-        });
-    };
+    addActiveClassesOnNavigationLinks() {
+        let currentlyActiveLinks = this.findLinksWithHashEqualToCurrentArticleId(this.linksInNav, this.currentArticle.id);
+        currentlyActiveLinks.forEach((activeLink) => this.addActiveClass(activeLink));
+    }
 
     findLinksWithHashEqualToCurrentArticleId = (links, hash) => {
         return links.filter((el) => el.hash.includes(hash));
     };
 
     addActiveClass = (el) => {
-        if (this.classOnAnchorTag) el.classList.add("active");
+        if (this.classOnAnchorTag) {
+            el.classList.add(this.navigationActiveClass);
+        }
 
         this.parentsObtainingActiveClass.forEach((parentSelector) => {
-            el.closest(parentSelector).classList.add("active");
+            el.closest(parentSelector).classList.add(this.navigationActiveClass);
         });
     };
 
     handleTestLine = () => {
-        this.removeActualLines();
-        if (this.showTestLine) this.createTestLine();
-    };
-
-    removeActualLines = () => {
         this.testLines.forEach((el) => el.remove());
+        if (this.showTestLine) this.createTestLine();
     };
 
     createTestLine = () => {

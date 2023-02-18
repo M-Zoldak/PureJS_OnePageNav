@@ -29,10 +29,21 @@ a {
     text-decoration: none;
     padding: 0.2em 0.4em;
     display: inline-block;
+    transition: 0.2s;
 }
 
 a.active {
     font-size: 1.4em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4rem;
+}
+a.active::before {
+    content: "— ";
+}
+a.active::after {
+    content: " —";
 }
 
 article {
@@ -44,6 +55,10 @@ article {
     font-size: 3rem;
     padding: 2rem;
     text-align: center;
+}
+
+article.active {
+    text-decoration: underline;
 }
 
 .mainOptions {
