@@ -1,6 +1,6 @@
 /**
  * @options
- * @param {string} selector - Should target "a" node elements e.g. ".main-nav a"
+ * @param {string} selector - Should target navigation "a" node elements e.g. ".main-nav a"
  * @param {string} defaultActiveAnchor - Should target link which gains class Active if none section reached
  * @param {string} navigationActiveClass - class that should be added on navigarion link when section reached
  * @param {string} articleActiveClass - class that should be added on section when section reached
@@ -15,6 +15,7 @@
  */
 class onePageNav {
     defaultLinkActive;
+    defaultActiveAnchor;
     classOnAnchorTag;
     changeOffset;
     parentsObtainingActiveClass;
@@ -22,7 +23,6 @@ class onePageNav {
     showTestLine;
     exactMatch;
     allowedPaths;
-    defaultActiveAnchor;
 
     navigationActiveClass;
     articleActiveClass;
@@ -38,7 +38,7 @@ class onePageNav {
 
     onChange = [];
 
-    constructor({ selector = "nav a", defaultLinkActive = false, classOnAnchorTag = true, changeOffset = 50, parentsObtainingActiveClass = [], setClassesOnSections = false, showTestLine = false, exactMatch = false, allowedPaths = undefined, navigationActiveClass = "active", articleActiveClass = "active", onChange = [], defaultActiveAnchor = undefined } = {}) {
+    constructor({ selector = "nav a", defaultLinkActive = true, classOnAnchorTag = true, changeOffset = 50, parentsObtainingActiveClass = [], setClassesOnSections = false, showTestLine = false, exactMatch = false, allowedPaths = undefined, navigationActiveClass = "active", articleActiveClass = "active", onChange = [], defaultActiveAnchor = undefined } = {}) {
         this.linksInNav = [...document.querySelectorAll(selector)];
 
         if (!this.linksInNav.length) {
@@ -64,6 +64,7 @@ class onePageNav {
 
     set = (optionName, value) => {
         this[optionName] = value;
+        this.newlyInitialized = true;
         this.invoke();
     };
 
@@ -80,15 +81,7 @@ class onePageNav {
         }
 
         this.handleTestLine();
-
-        // First initialize and scrolling function
-        this.listeners.forEach((el) => {
-            console.log(el);
-            removeEventListener(scroll, el);
-        });
-        let listener = window.addEventListener("scroll", () => this.handleOutput());
-        this.listeners.push(listener);
-
+        this.handleScrollListener();
         this.handleOutput();
     };
 
@@ -97,10 +90,20 @@ class onePageNav {
         return [...document.querySelectorAll(hashes.join(", "))];
     };
 
+    handleScrollListener = () => {
+        this.listeners.forEach((el) => {
+            removeEventListener(scroll, el);
+        });
+        let listener = window.addEventListener("scroll", () => this.handleOutput());
+        this.listeners.push(listener);
+    };
+
     handleOutput = () => {
         this.findCurrentArticle();
 
-        if (this.articleChanged()) {
+        if (this.articleChanged() || this.newlyInitialized) {
+            this.newlyInitialized = false;
+
             this.clearClasses();
             this.handleDefaultLinkActive();
 
@@ -151,8 +154,6 @@ class onePageNav {
 
     handleDefaultLinkActive() {
         if (this.currentArticle == undefined && this.defaultLinkActive) {
-            console.log(this.defaultActiveAnchor);
-
             this.addActiveClass(this.defaultActiveAnchor ?? this.linksInNav[0]);
         }
     }
