@@ -16,6 +16,7 @@
 class onePageNav {
     defaultLinkActive;
     defaultActiveAnchor;
+    differentActiveAnchor;
     classOnAnchorTag;
     changeOffset;
     parentsObtainingActiveClass;
@@ -38,7 +39,7 @@ class onePageNav {
 
     onChange = [];
 
-    constructor({ selector = "nav a", defaultLinkActive = true, classOnAnchorTag = true, changeOffset = 50, parentsObtainingActiveClass = [], setClassesOnSections = false, showTestLine = false, exactMatch = false, allowedPaths = undefined, navigationActiveClass = "active", articleActiveClass = "active", onChange = [], defaultActiveAnchor = undefined } = {}) {
+    constructor({ selector = "nav a", defaultLinkActive = true, classOnAnchorTag = true, changeOffset = 50, parentsObtainingActiveClass = [], setClassesOnSections = false, showTestLine = false, exactMatch = false, allowedPaths = undefined, navigationActiveClass = "active", articleActiveClass = "active", onChange = [], differentActiveAnchor = undefined } = {}) {
         this.linksInNav = [...document.querySelectorAll(selector)];
 
         if (!this.linksInNav.length) {
@@ -56,7 +57,7 @@ class onePageNav {
         this.allowedPaths = allowedPaths;
         this.navigationActiveClass = navigationActiveClass;
         this.articleActiveClass = articleActiveClass;
-        this.defaultActiveAnchor = document.querySelector(defaultActiveAnchor);
+        this.differentActiveAnchor = differentActiveAnchor;
         this.onChange = onChange;
 
         this.invoke();
@@ -153,6 +154,7 @@ class onePageNav {
     };
 
     handleDefaultLinkActive() {
+        if (this.differentActiveAnchor) this.defaultActiveAnchor = document.querySelector(this.differentActiveAnchor);
         if (this.currentArticle == undefined && this.defaultLinkActive) {
             this.addActiveClass(this.defaultActiveAnchor ?? this.linksInNav[0]);
         }
