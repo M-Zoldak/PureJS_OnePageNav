@@ -4,7 +4,7 @@
     },
     "name": "purejs_onepagenav",
     "version": "1.0.0",
-    "description": "Widely modifiable one page navigation script",
+    "description": "Highly configurable one page navigation script",
     "main": "index.html",
     "dependencies": {
         "ansi-styles": "^3.2.1",
@@ -126,9 +126,13 @@
         "minify": "minify ./script/onePageNav.js --out-file ./script/onePageNav.min.js"
     },
     "keywords": [
-        "Pure",
-        "JS",
-        "onePageNav"
+        "pure",
+        "js",
+        "onePageNav",
+        "one",
+        "page",
+        "nav",
+        "navigation"
     ],
     "author": "Mateusz Żołdak",
     "license": "MIT"
