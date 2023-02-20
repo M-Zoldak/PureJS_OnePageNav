@@ -61,6 +61,9 @@ class onePageNav {
         this.differentActiveAnchor = differentActiveAnchor;
         this.onChange = onChange;
 
+        this.articles = [];
+        this.debugLines = [];
+
         this.invoke();
     }
 

@@ -5,8 +5,7 @@
     "main": "index.html",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "minify": "minify ./script/onePageNav.js --out-file ./script/onePageNav.min.js",
-        "babel-env": "babel ./script/onePageNav.js --out-file ./script/onePageNav.min.js"
+        "babel": "babel ./script/onePageNav.js --out-file ./script/onePageNav.min.js"
     },
     "keywords": [
         "pure",
