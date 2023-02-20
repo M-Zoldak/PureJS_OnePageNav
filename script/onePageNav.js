@@ -120,7 +120,7 @@ class onePageNav {
         }
     };
 
-    findCurrentArticle() {
+    findCurrentArticle = () => {
         this.previousArticle = this.currentArticle;
         let tempCurrent = this.articles.filter((el) => el.offsetTop < window.scrollY + window.innerHeight / (100 / this.changeOffset)).at(-1);
 
@@ -130,9 +130,9 @@ class onePageNav {
         } else {
             this.currentArticle = undefined;
         }
-    }
+    };
 
-    clearClasses() {
+    clearClasses = () => {
         this.linksInNav.forEach((link) => {
             this.removeActiveClass(link);
         });
@@ -140,31 +140,31 @@ class onePageNav {
         this.articles.forEach((el) => {
             el.classList.remove(this.articleActiveClass);
         });
-    }
+    };
 
-    handleDefaultLinkActive() {
+    handleDefaultLinkActive = () => {
         if (this.differentActiveAnchor) this.defaultActiveAnchor = document.querySelector(this.differentActiveAnchor);
         if (this.currentArticle == undefined && this.defaultLinkActive) {
             this.addActiveClass(this.defaultActiveAnchor ?? this.linksInNav[0]);
         }
-    }
+    };
 
-    handleCallbacks() {
+    handleCallbacks = () => {
         this.onChange.forEach((callback) => {
             callback(this.currentArticle, this.previousArticle);
         });
-    }
+    };
 
-    handleArticleClasses() {
+    handleArticleClasses = () => {
         if (this.setClassesOnSections) {
             this.currentArticle.classList.add(this.articleActiveClass);
         }
-    }
+    };
 
-    addActiveClassesOnNavigationLinks() {
+    addActiveClassesOnNavigationLinks = () => {
         let currentlyActiveLinks = this.findLinksWithHashEqualToCurrentArticleId(this.linksInNav, this.currentArticle.id);
         currentlyActiveLinks.forEach((activeLink) => this.addActiveClass(activeLink));
-    }
+    };
 
     findLinksWithHashEqualToCurrentArticleId = (links, hash) => {
         return links.filter((el) => el.hash.includes(hash));
@@ -190,9 +190,9 @@ class onePageNav {
         });
     };
 
-    articleChanged() {
+    articleChanged = () => {
         return this.currentArticle != this.previousArticle;
-    }
+    };
 
     handleDebugLine = () => {
         this.debugLines.forEach((el) => el.remove());
