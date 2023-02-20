@@ -32,13 +32,13 @@ class onePageNav {
     previousArticle;
     currentArticle;
 
-    linksInNav = [];
-    articles = [];
+    linksInNav;
+    articles;
 
-    debugLines = [];
-    listeners = [];
+    debugLines;
+    currentWindowScrollListener;
 
-    onChange = [];
+    onChange;
 
     constructor({ selector = "nav a", defaultLinkActive = true, classOnAnchorTag = true, changeOffset = 50, parentsObtainingActiveClass = [], setClassesOnSections = false, debugLine = false, exactMatch = false, allowedPaths = undefined, navigationActiveClass = "active", articleActiveClass = "active", onChange = [], differentActiveAnchor = undefined } = {}) {
         this.linksInNav = [...document.querySelectorAll(selector)];
@@ -93,11 +93,10 @@ class onePageNav {
     };
 
     handleScrollListener = () => {
-        this.listeners.forEach((el) => {
-            removeEventListener(scroll, el);
-        });
-        let listener = window.addEventListener("scroll", () => this.handleOutput());
-        this.listeners.push(listener);
+        if (this.currentWindowScrollListener) {
+            removeEventListener(scroll, this.currentWindowScrollListener);
+        }
+        this.currentWindowScrollListener = window.addEventListener("scroll", () => this.handleOutput());
     };
 
     handleOutput = () => {
