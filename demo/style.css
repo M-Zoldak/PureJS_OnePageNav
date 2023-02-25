@@ -58,8 +58,20 @@ article {
     text-transform: uppercase;
 }
 
-article.active {
-    text-decoration: underline;
+article:nth-child(2n):not(:last-child) {
+    height: 40vh;
+}
+
+article:nth-child(3n):not(:last-child) {
+    height: 60vh;
+}
+
+article.active::after {
+    font-size: 1rem;
+    line-height: 3em;
+    content: "- Active";
+    margin-left: 1rem;
+    text-decoration: none;
 }
 
 .mainOptions {

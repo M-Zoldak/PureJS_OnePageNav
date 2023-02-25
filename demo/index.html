@@ -50,6 +50,21 @@
             </div>
             <br />
             <div class="switch-box">
+                <label>Update Hash</label>
+                <label class="switch">
+                    <input type="checkbox" name="updateHash" />
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="switch-box">
+                <label>Use hash from last section(exact matching)</label>
+                <label class="switch">
+                    <input type="checkbox" checked name="saveHashBetweenSections" />
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <br />
+            <div class="switch-box">
                 <label>Exact match option</label>
                 <label class="switch">
                     <input type="checkbox" name="exactMatch" />
@@ -73,10 +88,12 @@
         </div>
 
         <script src="./bg.js"></script>
-        <script src="../script/onePageNav.min.js"></script>
+        <script src="../script/onePageNav.js"></script>
         <script>
             document.querySelectorAll("article").forEach((el) => setContrast(el));
-            let onePage = new onePageNav();
+            let onePage = new onePageNav({
+                allowedPaths: ["/demo"],
+            });
         </script>
         <script src="./playground.js"></script>
     </body>
