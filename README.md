@@ -1,9 +1,20 @@
 # PureJS_onePageNav
 
-Highly configurable one page navigation script written in vanilla JS
+The PureJS_onePageNav library is designed to dynamically manage states of navigation links based on scroll offset. It comes with several options that allow customize page navigation working as intended.
 
-For now there is no deep documentation.
+Main functionalities are:
+- dynamically update nav links accordingly to reached section
+- update hash accordingly to nav link or section
+- choosing which link should be default active if none section reached
+- exactly matching sections and no section zones with exact match option
+- allows to set classes on links parents like [li, nav], not only anchor tags
+- enforcing script loading only if suits defined URL paths
+- defining distance from top, at which section should be changed
+- visualization line for easier understanding
+- changing options after script initialization
 
-You can check how script works on github pages - https://matheoz-sys.github.io/PureJS_onePageNav/demo
+## Useful links
 
-More about script and functions at the top of onePageNav.js
+You can check out the demo version at [Github Pages](https://github.com/Matheoz-sys/PureJS_onePageNav/demo).
+
+Initialization and script configuration can be found in the [wiki](https://github.com/Matheoz-sys/PureJS_onePageNav/wiki/About).
