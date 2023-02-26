@@ -15,6 +15,8 @@
  * @param {array} allowedPaths - list of paths, where script will be evaluated e.g ['^/start/$'] for example.com/start. Function evaluated with function el.match(givenRegex);
  * @param {array} onChange - array of functions, that should be fired on change e.g. [function1, function2], callback receives whole onePageNav object. More can be found in github wiki
  * @param {boolean} debugLine - show debug line
+ *
+ * @link More about script can be found at https://github.com/Matheoz-sys/PureJS_onePageNav/wiki/About
  */
 class onePageNav {
     // prettier-ignore
