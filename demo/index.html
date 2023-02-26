@@ -36,8 +36,8 @@
                 </label>
             </div>
             <div class="normal-box">
-                <label for="differentActiveAnchor">Default active anchor: </label>
-                <input type="text" name="differentActiveAnchor" />
+                <label for="defaultActiveElement">Default active anchor: </label>
+                <input type="text" name="defaultActiveElement" />
             </div>
             <div class="normal-box">
                 <pre>Copy from here:</pre>
@@ -91,9 +91,7 @@
         <script src="../script/onePageNav.js"></script>
         <script>
             document.querySelectorAll("article").forEach((el) => setContrast(el));
-            let onePage = new onePageNav({
-                allowedPaths: ["/demo"],
-            });
+            let onePage = new onePageNav();
         </script>
         <script src="./playground.js"></script>
     </body>

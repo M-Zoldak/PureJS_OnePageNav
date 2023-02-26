@@ -1,19 +1,19 @@
 /**
  * @options
  * @param {string} navLinksSelector - selector targeting anchor tags
- * @param {string} elementDefaultActive - selector to element, which obtain class active, if none section was reached(or active in exact match)
  * @param {string} anchorActiveClass - class name that will be added on anchor when section reached and alternatively on parents passes inside parentsObtainingActiveClass
  * @param {string} sectionActiveClass - class name that will be added on section when reached
+ * @param {string} defaultActiveElement - selector to element(e.g. <a> tag), which obtain class active, if none section was reached (or active if exact match option is used)
  * @param {int} changeOffset - the distance from the top of the page that the next element must be scrolled to in order to be activated. Value given in precents (0-100)% - default (50)
- * @param {boolean} classOnAnchorTag - name of class that should be set on anchor elements and parents if given for parentsObtainingActiveClasses - default (true)
- * @param {boolean} defaultLinkActive - determines whether first link element should be set as active.(t/f) May be combined with exact match option and/or element default active
- * @param {boolean} setClassesOnSections - if true, reached/active section will gain class active
- * @param {boolean} exactMatch - set class only if offset is located between begin and end of section
+ * @param {boolean} updateATagClass - name of class that should be set on anchor elements and parents if given for parentsObtainingActiveClasses - default (true)
+ * @param {boolean} defaultLinkActive - determines whether first link element should be set as active.(t/f) May be combined with exactMatch option and/or defaultActiveElement, to set another element instead of first link in array
+ * @param {boolean} setClassesOnSections - if true, reached section becomes active class
+ * @param {boolean} exactMatch - set class only if offset is located between begin and end of section, else change to undefined
  * @param {boolean} updateHash - update hash accordingly to section
- * @param {boolean} saveHashBetweenSections - hash won't change if there's a gap between sections, and exact match is on
+ * @param {boolean} saveHashBetweenSections - hash won't change if there's a gap between sections - has only impact if exactMatch option is active
  * @param {array} parentsObtainingActiveClass - array of selectors for closest parent elements, where class 'active' should be added or removed when section changes
- * @param {array} allowedPaths - list of paths, where script will be evaluated e.g ['', '/', '/start'], currently only simple strings, default empty - evaluated on every site
- * @param {array} onChange - array of functions, that should be fired on change e.g. [function1, function2], callback function receives two parameters: callback(currentSection, previousSection)
+ * @param {array} allowedPaths - list of paths, where script will be evaluated e.g ['^/start/$'] for example.com/start. Function evaluated with function el.match(givenRegex);
+ * @param {array} onChange - array of functions, that should be fired on change e.g. [function1, function2], callback receives whole onePageNav object. More can be found in github wiki
  * @param {boolean} debugLine - show debug line
  */
 class onePageNav {
@@ -21,24 +21,24 @@ class onePageNav {
     constructor({ 
         navLinksSelector = "nav a", 
         defaultLinkActive = true, 
-        classOnAnchorTag = true, 
+        updateATagClass = true, 
         changeOffset = 50, 
         parentsObtainingActiveClass = [], 
         setClassesOnSections = false, 
-        debugLine = false, 
         exactMatch = false, 
         allowedPaths = undefined, 
         anchorActiveClass = "active", 
         sectionActiveClass = "active", 
-        differentActiveAnchor = undefined, 
+        defaultActiveElement = undefined, 
         updateHash = false, 
         saveHashBetweenSections = true,
+        debugLine = false, 
         onChange = [], 
     } = {}) {
             
         this.navLinksSelector = navLinksSelector;
         this.defaultLinkActive = defaultLinkActive;
-        this.classOnAnchorTag = classOnAnchorTag;
+        this.updateATagClass = updateATagClass;
         this.changeOffset = changeOffset;
         this.parentsObtainingActiveClass = parentsObtainingActiveClass;
         this.setClassesOnSections = setClassesOnSections;
@@ -47,7 +47,7 @@ class onePageNav {
         this.allowedPaths = allowedPaths;
         this.anchorActiveClass = anchorActiveClass;
         this.sectionActiveClass = sectionActiveClass;
-        this.differentActiveAnchor = differentActiveAnchor;
+        this.defaultActiveElement = defaultActiveElement;
         this.updateHash = updateHash;
         this.onChange = onChange;
         this.saveHashBetweenSections = saveHashBetweenSections;
@@ -80,7 +80,7 @@ class onePageNav {
         if (this.shouldTerminate()) return;
 
         this.findLinks();
-        if (!this.linksInNav) {
+        if (!this.navLinks) {
             console.debug("The selector did not match any elements - `" + this.navLinksSelector + "`");
             return;
         }
@@ -107,11 +107,11 @@ class onePageNav {
     };
 
     findLinks = () => {
-        this.linksInNav = [...document.querySelectorAll(this.navLinksSelector)];
+        this.navLinks = [...document.querySelectorAll(this.navLinksSelector)];
     };
 
     findRelatedSections = () => {
-        let hashes = this.linksInNav.map((el) => el.hash).filter((el) => el);
+        let hashes = this.navLinks.map((el) => el.hash).filter((el) => el);
         this.sections = [...document.querySelectorAll(hashes.join(", "))];
     };
 
@@ -158,7 +158,7 @@ class onePageNav {
     };
 
     clearClasses = () => {
-        this.linksInNav.forEach((link) => {
+        this.navLinks.forEach((link) => {
             this.removeActiveClass(link);
         });
 
@@ -168,11 +168,11 @@ class onePageNav {
     };
 
     handleDefaultLinkActive = () => {
-        if (this.differentActiveAnchor) {
-            this.elementDefaultActive = document.querySelector(this.differentActiveAnchor);
+        if (this.defaultActiveElement) {
+            this.elementDefaultActive = document.querySelector(this.defaultActiveElement);
         }
         if (this.noSectionActive() && this.defaultLinkActive) {
-            this.addActiveClass(this.elementDefaultActive ?? this.linksInNav[0]);
+            this.addActiveClass(this.elementDefaultActive ?? this.navLinks[0]);
         }
     };
 
@@ -189,7 +189,7 @@ class onePageNav {
 
     handleCallbacks = () => {
         this.onChange.forEach((callback) => {
-            callback(this.currentSection, this.previousSection);
+            callback(this);
         });
     };
 
@@ -200,7 +200,7 @@ class onePageNav {
     };
 
     addActiveClassesOnNavigationLinks = () => {
-        let currentlyActiveLinks = this.findLinksWithHashEqualTocurrentSectionId(this.linksInNav, this.currentSection.id);
+        let currentlyActiveLinks = this.findLinksWithHashEqualTocurrentSectionId(this.navLinks, this.currentSection.id);
         currentlyActiveLinks.forEach((activeLink) => this.addActiveClass(activeLink));
     };
 
@@ -209,7 +209,7 @@ class onePageNav {
     };
 
     addActiveClass = (el) => {
-        if (this.classOnAnchorTag) {
+        if (this.updateATagClass) {
             el.classList.add(this.anchorActiveClass);
         }
 
@@ -219,7 +219,7 @@ class onePageNav {
     };
 
     removeActiveClass = (el) => {
-        if (this.classOnAnchorTag) {
+        if (this.updateATagClass) {
             el.classList.remove(this.anchorActiveClass);
         }
 
