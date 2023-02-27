@@ -15,6 +15,6 @@ Main functionalities are:
 
 ## Useful links
 
-You can check out the demo version at [Github Pages](https://github.com/Matheoz-sys/PureJS_onePageNav/demo).
+You can check out the demo version at [Github Pages](https://matheoz-sys.github.io/PureJS_onePageNav/demo/).
 
 Initialization and script configuration can be found in the [wiki](https://github.com/Matheoz-sys/PureJS_onePageNav/wiki/About).
