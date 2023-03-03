@@ -254,28 +254,28 @@ class onePageNav {
         if (!section) {
             return false;
         }
-        return this.currentOffset() < section.offsetTop;
+        return this.currentOffset() < section.getBoundingClientRect().top + document.documentElement.scrollTop;
     };
 
     isAboveSectionOffsetBottom = (section) => {
         if (!section) {
             return false;
         }
-        return this.currentOffset() < section.offsetTop + section.offsetHeight;
+        return this.currentOffset() < section.getBoundingClientRect().top + document.documentElement.scrollTop + section.offsetHeight;
     };
 
     isBelowSectionOffsetTop = (section) => {
         if (!section) {
             return false;
         }
-        return this.currentOffset() > section.offsetTop;
+        return this.currentOffset() > section.getBoundingClientRect().top + document.documentElement.scrollTop;
     };
 
     isBelowSectionOffsetBottom = (section) => {
         if (!section) {
             return false;
         }
-        return this.currentOffset() > section.offsetTop + section.offsetHeight;
+        return this.currentOffset() > section.getBoundingClientRect().top + document.documentElement.scrollTop + section.offsetHeight;
     };
 
     handleDebugLine = () => {
