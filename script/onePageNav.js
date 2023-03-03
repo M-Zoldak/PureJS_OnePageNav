@@ -243,7 +243,7 @@ class onePageNav {
     };
 
     insideWorkingArea = () => {
-        return this.currentOffset() > this.sections.at(0).offsetTop;
+        return this.currentOffset() > this.sections.at(0).getBoundingClientRect().top + document.documentElement.scrollTop;
     };
 
     isExactlyInsideSection = (section) => {
