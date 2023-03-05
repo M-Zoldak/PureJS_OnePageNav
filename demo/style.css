@@ -7,11 +7,6 @@
 html {
     scroll-behavior: smooth;
 }
-@media (max-width: 576px) {
-    html {
-        font-size: 90%;
-    }
-}
 
 body {
     height: 100vh;
@@ -86,16 +81,41 @@ article span {
     flex-direction: column;
 }
 
+article span::before {
+    content: "";
+    font-size: 1rem;
+    height: 3em;
+}
 article span::after {
+    content: "Active";
     font-size: 1rem;
     height: 0;
-    content: "Active";
     margin-left: 1rem;
     text-decoration: none;
     overflow: hidden;
     transition: 0.6s;
     height: 3em;
     line-height: 9em;
+}
+
+#article-2 {
+    display: flex;
+    flex-direction: column;
+    background-color: #000;
+    color: #fff;
+}
+
+#article-2 > p {
+    margin-top: 1rem;
+    margin-bottom: 3rem;
+}
+
+#article-2 > div {
+    display: flex;
+    flex-grow: 1;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
 }
 
 div.active > span::after,
@@ -113,15 +133,20 @@ article.active > span::after {
     padding: 1rem;
     background: black;
     color: white;
+    transition: 0.6s;
 }
 
-.mainOptions > * {
+.mainOptions > *:not(.mobile-button) {
     display: flex;
     width: 100%;
     justify-content: space-between;
     gap: 1rem;
     align-items: center;
     line-height: 1.8em;
+}
+
+.mobile-button {
+    display: none;
 }
 
 /* Borrowed from internet */
@@ -131,6 +156,10 @@ article.active > span::after {
     display: inline-block;
     width: 40px;
     height: 24px;
+}
+
+.switch-box .switch {
+    flex-shrink: 0;
 }
 
 /* Hide default HTML checkbox */
@@ -188,22 +217,55 @@ input:checked + .slider:before {
     border-radius: 50%;
 }
 
-#article-2 {
-    display: flex;
-    flex-direction: column;
-    background-color: #000;
-    color: #fff;
+@media (max-width: 650px) {
+    .mainOptions {
+        bottom: unset;
+        top: 100%;
+        transform: translateY(0);
+        width: 100%;
+    }
+
+    .mainOptions.active {
+        transform: translateY(-100%);
+    }
+
+    .mobile-button {
+        position: absolute;
+        left: 50%;
+        bottom: calc(100% - 1px);
+        transform: translateX(-50%);
+        width: 3rem;
+        height: 2.2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: black;
+        color: white;
+        transition: 0.5s;
+    }
+
+    .mobile-button:hover {
+        cursor: pointer;
+    }
+
+    .mainOptions i {
+        transition: 0.3s;
+    }
+
+    .mainOptions.active .mobile-button i {
+        transform: rotateX(180deg);
+    }
 }
 
-#article-2 > p {
-    margin-top: 1rem;
-    margin-bottom: 3rem;
+@media (max-width: 576px) {
+    html {
+        font-size: 90%;
+    }
 }
 
-#article-2 > div {
-    display: flex;
-    flex-grow: 1;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
+@media (max-width: 450px) {
+    .mainOptions .normal-box {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }

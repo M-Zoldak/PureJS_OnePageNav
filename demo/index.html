@@ -5,6 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link type="text/css" rel="stylesheet" href="./style.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <title>One Page Nav Test</title>
     </head>
     <body>
@@ -34,6 +35,7 @@
         </main>
 
         <div class="mainOptions">
+            <div class="mobile-button"><i class="fa-solid fa-chevron-up"></i></div>
             <div class="switch-box">
                 <label>Default link active</label>
                 <label class="switch">
@@ -101,6 +103,9 @@
         <script>
             document.querySelectorAll("article:not(#article-2)").forEach((el) => setContrast(el));
             document.querySelectorAll("#article-2 div").forEach((el) => setContrast(el));
+            document.querySelector(".mobile-button").addEventListener("click", function () {
+                document.querySelector(".mainOptions").classList.toggle("active");
+            });
             let onePage = new onePageNav();
         </script>
         <script src="./playground.js"></script>

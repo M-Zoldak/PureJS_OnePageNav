@@ -42,7 +42,6 @@ class onePageNav {
         onChange = [], 
         debugLine = false, 
     } = {}) {
-            
         this.navLinksSelector = navLinksSelector;
         this.defaultLinkActive = defaultLinkActive;
         this.updateATagClass = updateATagClass;
@@ -60,7 +59,6 @@ class onePageNav {
         this.onChange = onChange;
         this.showDebugLine = debugLine;
         this.debugLine = undefined;
-
         this.sections = [];
 
         this.initialize();
@@ -99,8 +97,7 @@ class onePageNav {
             // return;
         }
 
-        this.elementDefaultActive = document.querySelector(this.defaultActiveElement);
-
+        this.findElementDefaultActive();
         this.handleDebugLine();
         this.handleScrollListener();
         this.handleOutput();
@@ -230,6 +227,15 @@ class onePageNav {
         });
     };
 
+    findElementDefaultActive = () => {
+        try {
+            this.elementDefaultActive = document.querySelector(this.defaultActiveElement);
+        } catch {
+            this.elementDefaultActive = undefined;
+            console.debug("Default active element not found.");
+        }
+    };
+
     handleOnInitCallbacks = () => {
         this.onChange.forEach((callback) => {
             callback(this);
@@ -291,14 +297,24 @@ class onePageNav {
     };
 
     handleDebugLine = () => {
-        if (this.debugLine) this.debugLine.remove();
-        if (this.showDebugLine) this.createDebugLine();
+        if (this.debugLine && !this.showDebugLine) this.deleteDebugLine();
+        if (this.showDebugLine) this.debugLine ? this.updateDebugLineOffset() : this.createDebugLine();
+    };
+
+    deleteDebugLine = () => {
+        this.debugLine.remove();
+        this.debugLine = undefined;
     };
 
     createDebugLine = () => {
         let debugLine = document.createElement("div");
-        debugLine.setAttribute("style", `position: fixed;width: 100%;background: red;height: 2px;top: calc(${this.changeOffset}% - 1px);`);
+        debugLine.setAttribute("style", `position: fixed;width: 100%;background: red;height: 2px;transition: .6s; top:50%;`);
         this.debugLine = debugLine;
+        this.updateDebugLineOffset();
         document.body.appendChild(debugLine);
+    };
+
+    updateDebugLineOffset = () => {
+        this.debugLine.style.top = `calc(${this.changeOffset}% - 1px)`;
     };
 }
