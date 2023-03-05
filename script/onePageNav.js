@@ -13,7 +13,8 @@
  * @param {boolean} saveHashBetweenSections - hash won't change if there's a gap between sections - has only impact if exactMatch option is active
  * @param {array} parentsObtainingActiveClass - array of selectors for closest parent elements, where class 'active' should be added or removed when section changes
  * @param {array} allowedPaths - list of paths, where script will be evaluated e.g `['^/start/$']` for `example.com/start/`.
- * @param {array} onChange - array with functions, that should be fired on change e.g. [function1, function2], callback receives whole onePageNav object.
+ * @param {array} onInit - array with functions, that should be fired after script was fully initialized e.g. `onInit: [function1, function2]`, callback receives whole onePageNav object.
+ * @param {array} onChange - array with functions, that should be fired on change e.g. `onChange: [function1, function2]`, callback receives whole onePageNav object.
  * @param {boolean} debugLine - show debug line
  *
  * @link More about script can be found at https://github.com/Matheoz-sys/PureJS_onePageNav/wiki/About
@@ -37,6 +38,7 @@ class onePageNav {
         defaultActiveElement = undefined, 
         updateHash = false, 
         saveHashBetweenSections = true,
+        onInit = [], 
         onChange = [], 
         debugLine = false, 
     } = {}) {
@@ -54,6 +56,7 @@ class onePageNav {
         this.defaultActiveElement = defaultActiveElement;
         this.updateHash = updateHash;
         this.saveHashBetweenSections = saveHashBetweenSections;
+        this.onInit = onInit;
         this.onChange = onChange;
         this.showDebugLine = debugLine;
         this.debugLine = undefined;
@@ -101,6 +104,7 @@ class onePageNav {
         this.handleDebugLine();
         this.handleScrollListener();
         this.handleOutput();
+        this.handleOnInitCallbacks();
     };
 
     shouldTerminate = () => {
@@ -123,7 +127,7 @@ class onePageNav {
     };
 
     handleScrollListener = () => {
-        this.currentWindowScrollListener && removeEventListener(scroll, this.currentWindowScrollListener);
+        removeEventListener(scroll, this.currentWindowScrollListener);
         this.currentWindowScrollListener = window.addEventListener("scroll", () => this.handleOutput());
     };
 
@@ -137,14 +141,15 @@ class onePageNav {
 
             this.clearClasses();
             this.handleDefaultLinkActive();
-
             this.handleHash();
-            this.handleCallbacks();
+
+            if (!this.noSectionActive()) this.handleOnChangeCallbacks();
 
             if (this.noSectionActive()) return;
 
             this.handleSectionClasses();
             this.addActiveClassesOnNavigationLinks();
+            this.handleOnChangeCallbacks();
         }
     };
 
@@ -190,12 +195,6 @@ class onePageNav {
         }
     };
 
-    handleCallbacks = () => {
-        this.onChange.forEach((callback) => {
-            callback(this);
-        });
-    };
-
     handleSectionClasses = () => {
         if (this.setClassesOnSections) {
             this.currentSection.classList.add(this.sectionActiveClass);
@@ -228,6 +227,18 @@ class onePageNav {
 
         this.parentsObtainingActiveClass.forEach((parentSelector) => {
             el.closest(parentSelector).classList.remove(this.anchorActiveClass);
+        });
+    };
+
+    handleOnInitCallbacks = () => {
+        this.onChange.forEach((callback) => {
+            callback(this);
+        });
+    };
+
+    handleOnChangeCallbacks = () => {
+        this.onChange.forEach((callback) => {
+            callback(this);
         });
     };
 
