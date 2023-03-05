@@ -63,6 +63,7 @@ a.active::after {
 article {
     height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     font-weight: bolder;
@@ -80,12 +81,26 @@ article:nth-child(3n):not(:last-child) {
     height: 60vh;
 }
 
-article.active::after {
+article span {
+    display: flex;
+    flex-direction: column;
+}
+
+article span::after {
     font-size: 1rem;
-    line-height: 3em;
-    content: "- Active";
+    height: 0;
+    content: "Active";
     margin-left: 1rem;
     text-decoration: none;
+    overflow: hidden;
+    transition: 0.6s;
+    height: 3em;
+    line-height: 9em;
+}
+
+div.active > span::after,
+article.active > span::after {
+    line-height: 3em;
 }
 
 .mainOptions {
