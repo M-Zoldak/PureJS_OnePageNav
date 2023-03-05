@@ -14,6 +14,7 @@
                 <li><a href="#start">Start</a></li>
                 <li><a href="#article-1">Article-1</a></li>
                 <li><a href="#article-2">Article-2</a></li>
+                <li><a href="#subsection" class="smaller">subsection</a></li>
                 <li><a href="#article-3">Article-3</a></li>
             </ul>
         </nav>
@@ -23,7 +24,12 @@
             <article id="start">start</article>
             <article id="article-1">article-1</article>
             <article id="placeholder">Part with ID, but without Navi Point</article>
-            <article id="article-2">article-2</article>
+            <article id="article-2">
+                <p>Article-2</p>
+                <div></div>
+                <div id="subsection">subsection</div>
+                <div></div>
+            </article>
             <article id="article-3">article-3</article>
         </main>
 
@@ -57,7 +63,10 @@
                 </label>
             </div>
             <div class="switch-box">
-                <label>Use hash from last section(exact matching)</label>
+                <label
+                    >Keep hash from section above<br />
+                    <pre>works only with exact matching on</pre>
+                </label>
                 <label class="switch">
                     <input type="checkbox" checked name="saveHashBetweenSections" />
                     <span class="slider round"></span>
@@ -81,7 +90,7 @@
             <div class="switch-box">
                 <label>Show debug Line</label>
                 <label class="switch">
-                    <input type="checkbox" name="debugLine" />
+                    <input type="checkbox" name="showDebugLine" />
                     <span class="slider round"></span>
                 </label>
             </div>
@@ -90,7 +99,8 @@
         <script src="./bg.js"></script>
         <script src="../script/onePageNav.js"></script>
         <script>
-            document.querySelectorAll("article").forEach((el) => setContrast(el));
+            document.querySelectorAll("article:not(#article-2)").forEach((el) => setContrast(el));
+            document.querySelectorAll("#article-2 div").forEach((el) => setContrast(el));
             let onePage = new onePageNav();
         </script>
         <script src="./playground.js"></script>

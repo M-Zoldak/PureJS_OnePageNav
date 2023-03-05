@@ -3,20 +3,23 @@
  * @param {string} navLinksSelector - selector targeting anchor tags
  * @param {string} anchorActiveClass - class name that will be added on anchor when section reached and alternatively on parents passes inside parentsObtainingActiveClass
  * @param {string} sectionActiveClass - class name that will be added on section when reached
- * @param {string} defaultActiveElement - selector to element(e.g. <a> tag), which obtain class active, if none section was reached (or active if exact match option is used)
+ * @param {string} defaultActiveElement - selector to element(e.g. `<a>` tag), which obtain class active, if none section was reached (or active if exact match option is used)
  * @param {int} changeOffset - the distance from the top of the page that the next element must be scrolled to in order to be activated. Value given in precents (0-100)% - default (50)
- * @param {boolean} updateATagClass - name of class that should be set on anchor elements and parents if given for parentsObtainingActiveClasses - default (true)
- * @param {boolean} defaultLinkActive - determines whether first link element should be set as active.(t/f) May be combined with exactMatch option and/or defaultActiveElement, to set another element instead of first link in array
+ * @param {boolean} updateATagClass - determines if class should be added to `<a>` tag
+ * @param {boolean} defaultLinkActive - indicates whether first link element should be set as active. May be combined with exactMatch option and/or defaultActiveElement, to set another element instead of first link in array
  * @param {boolean} setClassesOnSections - if true, reached section becomes active class
  * @param {boolean} exactMatch - set class only if offset is located between begin and end of section, else change to undefined
  * @param {boolean} updateHash - update hash accordingly to section
  * @param {boolean} saveHashBetweenSections - hash won't change if there's a gap between sections - has only impact if exactMatch option is active
  * @param {array} parentsObtainingActiveClass - array of selectors for closest parent elements, where class 'active' should be added or removed when section changes
- * @param {array} allowedPaths - list of paths, where script will be evaluated e.g ['^/start/$'] for example.com/start. Function evaluated with function el.match(givenRegex);
- * @param {array} onChange - array of functions, that should be fired on change e.g. [function1, function2], callback receives whole onePageNav object. More can be found in github wiki
+ * @param {array} allowedPaths - list of paths, where script will be evaluated e.g `['^/start/$']` for `example.com/start/`.
+ * @param {array} onChange - array with functions, that should be fired on change e.g. [function1, function2], callback receives whole onePageNav object.
  * @param {boolean} debugLine - show debug line
  *
  * @link More about script can be found at https://github.com/Matheoz-sys/PureJS_onePageNav/wiki/About
+ *
+ * @copyright Copyright (c) 2023 Mateusz Żołdak
+ * @license licensed under MIT license
  */
 class onePageNav {
     // prettier-ignore
@@ -34,8 +37,8 @@ class onePageNav {
         defaultActiveElement = undefined, 
         updateHash = false, 
         saveHashBetweenSections = true,
-        debugLine = false, 
         onChange = [], 
+        debugLine = false, 
     } = {}) {
             
         this.navLinksSelector = navLinksSelector;
@@ -44,18 +47,18 @@ class onePageNav {
         this.changeOffset = changeOffset;
         this.parentsObtainingActiveClass = parentsObtainingActiveClass;
         this.setClassesOnSections = setClassesOnSections;
-        this.debugLine = debugLine;
         this.exactMatch = exactMatch;
         this.allowedPaths = allowedPaths;
         this.anchorActiveClass = anchorActiveClass;
         this.sectionActiveClass = sectionActiveClass;
         this.defaultActiveElement = defaultActiveElement;
         this.updateHash = updateHash;
-        this.onChange = onChange;
         this.saveHashBetweenSections = saveHashBetweenSections;
+        this.onChange = onChange;
+        this.showDebugLine = debugLine;
+        this.debugLine = undefined;
 
         this.sections = [];
-        this.debugLines = [];
 
         this.initialize();
     }
@@ -90,8 +93,10 @@ class onePageNav {
         this.findRelatedSections();
         if (!this.sections) {
             console.debug("No sections found");
-            return;
+            // return;
         }
+
+        this.elementDefaultActive = document.querySelector(this.defaultActiveElement);
 
         this.handleDebugLine();
         this.handleScrollListener();
@@ -118,9 +123,7 @@ class onePageNav {
     };
 
     handleScrollListener = () => {
-        if (this.currentWindowScrollListener) {
-            removeEventListener(scroll, this.currentWindowScrollListener);
-        }
+        this.currentWindowScrollListener && removeEventListener(scroll, this.currentWindowScrollListener);
         this.currentWindowScrollListener = window.addEventListener("scroll", () => this.handleOutput());
     };
 
@@ -145,18 +148,19 @@ class onePageNav {
         }
     };
 
-    findCurrentSection = () => {
+    findFirstSectionAbove = () => {
         return this.sections.filter((section) => this.isBelowSectionOffsetTop(section)).at(-1);
+    };
+
+    findCurrentSection = () => {
+        if (this.exactMatch) return this.sections.filter((section) => this.isExactlyInsideSection(section)).at(-1);
+        else return this.findFirstSectionAbove();
     };
 
     updateCurrentSection = (newSection) => {
         this.previousSection = this.currentSection;
 
-        if (!this.exactMatch) {
-            this.currentSection = newSection ?? this.handleDefaultLinkActive();
-        } else {
-            this.currentSection = this.isAboveSectionOffsetBottom(newSection) ? newSection : this.handleDefaultLinkActive();
-        }
+        this.currentSection = newSection ?? this.handleDefaultLinkActive();
     };
 
     clearClasses = () => {
@@ -170,19 +174,16 @@ class onePageNav {
     };
 
     handleDefaultLinkActive = () => {
-        if (this.defaultActiveElement) {
-            this.elementDefaultActive = document.querySelector(this.defaultActiveElement);
-        }
         if (this.noSectionActive() && this.defaultLinkActive) {
             this.addActiveClass(this.elementDefaultActive ?? this.navLinks[0]);
         }
     };
 
     handleHash = () => {
-        if (!this.updateHash) {
-            return;
-        } else if (this.exactMatch && !this.currentSection && this.saveHashBetweenSections && this.insideWorkingArea()) {
-            let lastSectionAbove = this.findCurrentSection();
+        if (!this.updateHash) return;
+
+        if (this.exactMatch && this.noSectionActive() && this.saveHashBetweenSections && this.passedBeginningOfFirstArticle()) {
+            let lastSectionAbove = this.findFirstSectionAbove();
             history.pushState({}, "", lastSectionAbove ? "#" + lastSectionAbove.id : " ");
         } else {
             history.pushState({}, "", this.currentSection ? "#" + this.currentSection.id : " ");
@@ -242,7 +243,7 @@ class onePageNav {
         return window.scrollY + window.innerHeight / (100 / this.changeOffset);
     };
 
-    insideWorkingArea = () => {
+    passedBeginningOfFirstArticle = () => {
         return this.currentOffset() > this.sections.at(0).getBoundingClientRect().top + document.documentElement.scrollTop;
     };
 
@@ -279,14 +280,14 @@ class onePageNav {
     };
 
     handleDebugLine = () => {
-        this.debugLines.forEach((el) => el.remove());
-        if (this.debugLine) this.createDebugLine();
+        if (this.debugLine) this.debugLine.remove();
+        if (this.showDebugLine) this.createDebugLine();
     };
 
     createDebugLine = () => {
         let debugLine = document.createElement("div");
         debugLine.setAttribute("style", `position: fixed;width: 100%;background: red;height: 2px;top: calc(${this.changeOffset}% - 1px);`);
-        this.debugLines.push(debugLine);
+        this.debugLine = debugLine;
         document.body.appendChild(debugLine);
     };
 }

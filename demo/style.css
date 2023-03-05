@@ -7,6 +7,11 @@
 html {
     scroll-behavior: smooth;
 }
+@media (max-width: 576px) {
+    html {
+        font-size: 90%;
+    }
+}
 
 body {
     height: 100vh;
@@ -32,6 +37,10 @@ a {
     transition: 0.2s;
 }
 
+a.smaller {
+    font-size: 0.9em;
+}
+
 a.active {
     font-size: 1.4em;
     display: flex;
@@ -39,9 +48,14 @@ a.active {
     align-items: center;
     gap: 0.4rem;
 }
+a.smaller.active {
+    font-size: 1.2em;
+}
+
 a.active::before {
     content: "— ";
 }
+
 a.active::after {
     content: " —";
 }
@@ -157,4 +171,24 @@ input:checked + .slider:before {
 
 .slider.round:before {
     border-radius: 50%;
+}
+
+#article-2 {
+    display: flex;
+    flex-direction: column;
+    background-color: #000;
+    color: #fff;
+}
+
+#article-2 > p {
+    margin-top: 1rem;
+    margin-bottom: 3rem;
+}
+
+#article-2 > div {
+    display: flex;
+    flex-grow: 1;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
 }
