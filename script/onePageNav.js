@@ -204,7 +204,7 @@ class onePageNav {
     };
 
     findLinksWithHashEqualTocurrentSectionId = (links, hash) => {
-        return links.filter((el) => el.hash.includes(hash));
+        return links.filter((el) => el.hash == `#${hash}`);
     };
 
     addActiveClass = (el) => {
@@ -308,13 +308,14 @@ class onePageNav {
 
     createDebugLine = () => {
         let debugLine = document.createElement("div");
-        debugLine.setAttribute("style", `position: fixed;width: 100%;background: red;height: 2px;transition: .6s; top:50%;`);
+        debugLine.classList.add("debugLine");
+        debugLine.setAttribute("style", `position: fixed;width: 100%;background: #ff00007a;height: 4px;transition: .6s; top:50%;`);
         this.debugLine = debugLine;
         this.updateDebugLineOffset();
         document.body.appendChild(debugLine);
     };
 
     updateDebugLineOffset = () => {
-        this.debugLine.style.top = `calc(${this.changeOffset}% - 1px)`;
+        this.debugLine.style.top = `calc(${this.changeOffset}% - 2px)`;
     };
 }

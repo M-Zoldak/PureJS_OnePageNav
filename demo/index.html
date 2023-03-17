@@ -6,6 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link type="text/css" rel="stylesheet" href="./style.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet" />
         <title>One Page Nav Test</title>
     </head>
     <body>
@@ -16,22 +19,58 @@
                 <li><a href="#article-1">Article-1</a></li>
                 <li><a href="#article-2">Article-2</a></li>
                 <li><a href="#subsection" class="smaller">subsection</a></li>
+                <li><a href="#subsection-2" class="smaller">subsection-2</a></li>
                 <li><a href="#article-3">Article-3</a></li>
             </ul>
         </nav>
 
         <main>
-            <article id=""><span>Article without ID</span></article>
-            <article id="start"><span>start</span></article>
-            <article id="article-1"><span>article-1</span></article>
-            <article id="placeholder"><span>Part with ID, but without Navi Point</span></article>
+            <article>
+                <span>Article without ID</span>
+                <p>Turn on <strong>debug line</strong> for better understanding how script behaves.</p>
+                <p>Turn off <strong>default link</strong> option, to update classes accordingly to current and passed articles.</p>
+            </article>
+            <article id="start">
+                <span>start</span>
+                <p>Turn on <strong>update hash</strong> option, and see how the location hash changes.</p>
+            </article>
+            <article id="article-1">
+                <span>article-1</span>
+                <p>Change <strong>distance from top</strong>, if you like to.</p>
+            </article>
             <article id="article-2">
                 <span>Article-2</span>
-                <div></div>
-                <div id="subsection"><span>subsection</span></div>
-                <div></div>
+                <div id="subsection">
+                    <span>subsection</span>
+                    <p>You can also try to steer active classes on <strong>articles</strong>.</p>
+                </div>
+                <div id="subsection-2"><span>subsection-2</span></div>
             </article>
-            <article id="article-3"><span>article-3</span></article>
+            <article id="placeholder">
+                <span>Exact match option</span>
+                <p>This section doesn't have according menu point.</p>
+                <p>Here you can try, how <strong>exact matching</strong> works.</p>
+                <p>If <strong>hash updating</strong> is active, you can choose to <strong>keep last hash</strong> or leave it empty.</p>
+                <p></p>
+                <p>If no section was Matched, you can set <strong>another default anchor</strong> to become class "active". This has to be used together with <strong>default link option</strong></p>
+                <p>On this site, it's going to have impact only at this and very top section.</p>
+            </article>
+            <article id="article-3">
+                <span>article-3</span>
+                <p>Script has even more options</p>
+                <p><strong>callbacks</strong> on initialization and change</p>
+                <p>setting <strong>own classes</strong> for anchors and sections</p>
+                <p><strong>selecting parents</strong> in navigation e.g. <strong>li</strong> parent for <strong>a</strong> tag.</p>
+            </article>
+            <article id="placeholder">
+                <span>The end section</span>
+                <p>
+                    You can find out more about options at
+                    <a href="https://github.com/Matheoz-sys/PureJS_onePageNav/wiki/About" target="_blank">
+                        <strong><i class="fa-brands fa-github"></i> Github Wiki</strong>
+                    </a>
+                </p>
+            </article>
         </main>
 
         <div class="mainOptions">
@@ -105,6 +144,7 @@
             document.querySelectorAll("#article-2 div").forEach((el) => setContrast(el));
             document.querySelector(".mobile-button").addEventListener("click", function () {
                 document.querySelector(".mainOptions").classList.toggle("active");
+                document.querySelector(".mobile-button").classList.toggle("active");
             });
             let onePage = new onePageNav();
         </script>
