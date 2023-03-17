@@ -24,12 +24,15 @@ pre {
 }
 
 @mixin glassBox() {
-    background: rgba(255, 255, 255, 0.61);
+    background: rgba(255, 255, 255, 0.68);
     border-radius: 16px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
     border: 1px solid rgba(255, 255, 255, 0.34);
+    @media (max-width: 768px) {
+        background: rgba(255, 255, 255, 0.83);
+    }
 }
 
 nav {
@@ -87,7 +90,7 @@ nav a {
 }
 
 article {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -161,6 +164,7 @@ article {
     }
     a {
         text-decoration: none;
+        font-size: 1.3em;
 
         strong {
             &:hover {
@@ -317,7 +321,7 @@ article.active > span::after {
     transition: 0.4s;
     @include glassBox();
     border-radius: 0;
-    background-color: #1c1c1ca8;
+    background-color: #1c1c1ca8 !important;
 
     &::before {
         position: absolute;
@@ -333,11 +337,11 @@ article.active > span::after {
 }
 
 input:checked + .slider {
-    background-color: #2195f3;
+    background-color: #2195f3 !important;
 }
 
 input:focus + .slider {
-    box-shadow: 0 0 1px #2196f3;
+    box-shadow: 0 0 1px #2196f3 !important;
 }
 
 input:checked + .slider:before {
