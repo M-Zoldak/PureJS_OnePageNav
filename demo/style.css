@@ -84,7 +84,7 @@ nav a.active {
   color: black;
 }
 
-article {
+section {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -96,33 +96,33 @@ article {
   transition: color 0.5s;
   letter-spacing: 0.025rem;
 }
-body:not(.sections-on) article {
+body:not(.sections-on) section {
   color: #1b1b1b;
 }
-body.sections-on article {
+body.sections-on section {
   color: #5d5d5d;
 }
-body.sections-on article.active {
+body.sections-on section.active {
   color: #1b1b1b;
 }
-article:nth-child(2n):not(:last-child) {
+section:nth-child(2n):not(:last-child) {
   height: 40vh;
 }
-article:nth-child(3n):not(:last-child) {
+section:nth-child(3n):not(:last-child) {
   height: 60vh;
 }
-article span {
+section span {
   text-transform: uppercase;
   display: flex;
   flex-direction: column;
   font-size: 3rem;
 }
-article span::before {
+section span::before {
   content: "";
   font-size: 1rem;
   height: 3em;
 }
-article span::after {
+section span::after {
   content: "Active";
   font-size: 1rem;
   height: 0;
@@ -132,13 +132,13 @@ article span::after {
   height: 3em;
   line-height: 9em;
 }
-article p {
+section p {
   line-height: 2em;
 }
-article p + p {
+section p + p {
   margin-top: 2rem;
 }
-article strong {
+section strong {
   background: rgba(0, 0, 0, 0.6);
   border-radius: 0.4rem;
   font-size: 0.95em;
@@ -148,30 +148,30 @@ article strong {
   white-space: nowrap;
   transition: 0.3s;
 }
-article a {
+section a {
   text-decoration: none;
   font-size: 1.3em;
 }
-article a strong:hover {
+section a strong:hover {
   mix-blend-mode: unset;
   color: white;
 }
-article a:hover strong {
+section a:hover strong {
   background: rgba(0, 0, 0, 0.8);
 }
 
-#article-2 {
+#section-2 {
   display: flex;
   flex-direction: column;
   padding: 1rem;
   padding-top: 0;
   height: 120vh;
 }
-#article-2 > span {
+#section-2 > span {
   height: 50%;
   justify-content: center;
 }
-#article-2 > div {
+#section-2 > div {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -180,15 +180,15 @@ article a:hover strong {
   justify-content: center;
   align-items: center;
 }
-body.sections-on #article-2 > div {
+body.sections-on #section-2 > div {
   color: #5d5d5d;
 }
-body.sections-on #article-2 > div.active {
+body.sections-on #section-2 > div.active {
   color: #1b1b1b;
 }
 
 div.active > span::after,
-article.active > span::after {
+section.active > span::after {
   line-height: 3em;
 }
 

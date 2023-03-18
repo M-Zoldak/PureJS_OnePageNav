@@ -89,7 +89,7 @@ nav a {
     }
 }
 
-article {
+section {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -179,7 +179,7 @@ article {
     }
 }
 
-#article-2 {
+#section-2 {
     display: flex;
     flex-direction: column;
     padding: 1rem;
@@ -213,7 +213,7 @@ article {
 }
 
 div.active > span::after,
-article.active > span::after {
+section.active > span::after {
     line-height: 3em;
 }
 

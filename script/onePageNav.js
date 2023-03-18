@@ -187,7 +187,7 @@ class onePageNav {
     handleHash = () => {
         if (!this.updateHash) return;
 
-        if (this.exactMatch && Section.noneActive(this) && this.saveHashBetweenSections && Offset.passedBeginningOfFirstArticle(this)) {
+        if (this.exactMatch && Section.noneActive(this) && this.saveHashBetweenSections && Offset.passedBeginningOfFirstSection(this)) {
             let lastSectionAbove = this.firstSectionAbove();
             history.replaceState(null, null, lastSectionAbove ? "#" + lastSectionAbove.id : " ");
         } else {
@@ -282,7 +282,7 @@ class Offset {
         return this.position(pageNavObj) < this.posYFromPageTop(section) + section.offsetHeight;
     };
 
-    static passedBeginningOfFirstArticle = (pageNavObj) => {
+    static passedBeginningOfFirstSection = (pageNavObj) => {
         return this.position(pageNavObj) > pageNavObj.sections.at(0).getBoundingClientRect().top + document.documentElement.scrollTop;
     };
 
