@@ -60,6 +60,7 @@ class onePageNav {
         this.showDebugLine = debugLine;
         this.debugLine = undefined;
         this.sections = [];
+        this.that = this;
 
         this.initialize();
     }
@@ -105,6 +106,10 @@ class onePageNav {
     };
 
     shouldTerminate = () => {
+        return this.isInAllowedPaths();
+    };
+
+    isInAllowedPaths = () => {
         if (!this.allowedPaths) return false;
 
         let currentPath = document.location.pathname.trim();
@@ -124,25 +129,23 @@ class onePageNav {
     };
 
     handleScrollListener = () => {
-        removeEventListener(scroll, this.currentWindowScrollListener);
-        this.currentWindowScrollListener = window.addEventListener("scroll", () => this.handleOutput());
+        window.removeEventListener(scroll, this.handleOutput);
+        window.addEventListener("scroll", this.handleOutput);
     };
 
     handleOutput = () => {
-        let foundSection = this.findCurrentSection();
+        this.updateCurrentSection(this.findCurrentSection());
 
-        this.updateCurrentSection(foundSection);
-
-        if (this.sectionChanged() || this.newlyInitialized) {
+        if (Section.hasChanged(this) || this.newlyInitialized) {
             this.newlyInitialized = false;
 
             this.clearClasses();
             this.handleDefaultLinkActive();
             this.handleHash();
 
-            if (!this.noSectionActive()) this.handleOnChangeCallbacks();
+            if (!Section.noneActive(this)) this.handleOnChangeCallbacks();
 
-            if (this.noSectionActive()) return;
+            if (Section.noneActive(this)) return;
 
             this.handleSectionClasses();
             this.addActiveClassesOnNavigationLinks();
@@ -150,13 +153,13 @@ class onePageNav {
         }
     };
 
-    findFirstSectionAbove = () => {
-        return this.sections.filter((section) => this.isBelowSectionOffsetTop(section)).at(-1);
+    firstSectionAbove = () => {
+        return this.sections.filter((section) => Offset.belowSectionOffsetTop(this, section)).at(-1);
     };
 
     findCurrentSection = () => {
-        if (this.exactMatch) return this.sections.filter((section) => this.isExactlyInsideSection(section)).at(-1);
-        else return this.findFirstSectionAbove();
+        if (this.exactMatch) return this.sections.filter((section) => Offset.exactlyInsideSection(this, section)).at(-1);
+        else return this.firstSectionAbove();
     };
 
     updateCurrentSection = (newSection) => {
@@ -176,7 +179,7 @@ class onePageNav {
     };
 
     handleDefaultLinkActive = () => {
-        if (this.noSectionActive() && this.defaultLinkActive) {
+        if (Section.noneActive(this) && this.defaultLinkActive) {
             this.addActiveClass(this.elementDefaultActive ?? this.navLinks[0]);
         }
     };
@@ -184,11 +187,11 @@ class onePageNav {
     handleHash = () => {
         if (!this.updateHash) return;
 
-        if (this.exactMatch && this.noSectionActive() && this.saveHashBetweenSections && this.passedBeginningOfFirstArticle()) {
-            let lastSectionAbove = this.findFirstSectionAbove();
-            history.pushState({}, "", lastSectionAbove ? "#" + lastSectionAbove.id : " ");
+        if (this.exactMatch && Section.noneActive(this) && this.saveHashBetweenSections && Offset.passedBeginningOfFirstArticle(this)) {
+            let lastSectionAbove = this.firstSectionAbove();
+            history.replaceState(null, null, lastSectionAbove ? "#" + lastSectionAbove.id : " ");
         } else {
-            history.pushState({}, "", this.currentSection ? "#" + this.currentSection.id : " ");
+            history.replaceState(null, null, this.currentSection ? "#" + this.currentSection.id : " ");
         }
     };
 
@@ -199,31 +202,31 @@ class onePageNav {
     };
 
     addActiveClassesOnNavigationLinks = () => {
-        let currentlyActiveLinks = this.findLinksWithHashEqualTocurrentSectionId(this.navLinks, this.currentSection.id);
+        let currentlyActiveLinks = this.allLinksIncludingHash(this.navLinks, this.currentSection.id);
         currentlyActiveLinks.forEach((activeLink) => this.addActiveClass(activeLink));
     };
 
-    findLinksWithHashEqualTocurrentSectionId = (links, hash) => {
-        return links.filter((el) => el.hash == `#${hash}`);
+    allLinksIncludingHash = (links, hash) => {
+        return links.filter((link) => link.hash == `#${hash}`);
     };
 
-    addActiveClass = (el) => {
+    addActiveClass = (aElement) => {
         if (this.updateATagClass) {
-            el.classList.add(this.anchorActiveClass);
+            aElement.classList.add(this.anchorActiveClass);
         }
 
         this.parentsObtainingActiveClass.forEach((parentSelector) => {
-            el.closest(parentSelector).classList.add(this.anchorActiveClass);
+            aElement.closest(parentSelector).classList.add(this.anchorActiveClass);
         });
     };
 
-    removeActiveClass = (el) => {
+    removeActiveClass = (aElement) => {
         if (this.updateATagClass) {
-            el.classList.remove(this.anchorActiveClass);
+            aElement.classList.remove(this.anchorActiveClass);
         }
 
         this.parentsObtainingActiveClass.forEach((parentSelector) => {
-            el.closest(parentSelector).classList.remove(this.anchorActiveClass);
+            aElement.closest(parentSelector).classList.remove(this.anchorActiveClass);
         });
     };
 
@@ -248,74 +251,93 @@ class onePageNav {
         });
     };
 
-    sectionChanged = () => {
-        return this.currentSection != this.previousSection;
-    };
-
-    noSectionActive = () => {
-        return this.currentSection == undefined;
-    };
-
-    currentOffset = () => {
-        return window.scrollY + window.innerHeight / (100 / this.changeOffset);
-    };
-
-    passedBeginningOfFirstArticle = () => {
-        return this.currentOffset() > this.sections.at(0).getBoundingClientRect().top + document.documentElement.scrollTop;
-    };
-
-    isExactlyInsideSection = (section) => {
-        return this.isBelowSectionOffsetTop(section) && this.isAboveSectionOffsetBottom(section);
-    };
-
-    isAboveSectionOffsetTop = (section) => {
-        if (!section) {
-            return false;
-        }
-        return this.currentOffset() < section.getBoundingClientRect().top + document.documentElement.scrollTop;
-    };
-
-    isAboveSectionOffsetBottom = (section) => {
-        if (!section) {
-            return false;
-        }
-        return this.currentOffset() < section.getBoundingClientRect().top + document.documentElement.scrollTop + section.offsetHeight;
-    };
-
-    isBelowSectionOffsetTop = (section) => {
-        if (!section) {
-            return false;
-        }
-        return this.currentOffset() > section.getBoundingClientRect().top + document.documentElement.scrollTop;
-    };
-
-    isBelowSectionOffsetBottom = (section) => {
-        if (!section) {
-            return false;
-        }
-        return this.currentOffset() > section.getBoundingClientRect().top + document.documentElement.scrollTop + section.offsetHeight;
-    };
-
     handleDebugLine = () => {
-        if (this.debugLine && !this.showDebugLine) this.deleteDebugLine();
-        if (this.showDebugLine) this.debugLine ? this.updateDebugLineOffset() : this.createDebugLine();
+        if (!this.debugLine) this.debugLine = new DebugLine(this);
+        this.debugLine.update(this.showDebugLine);
+    };
+}
+
+class Offset {
+    static position = ({ changeOffset }) => {
+        return window.scrollY + window.innerHeight / (100 / changeOffset);
     };
 
-    deleteDebugLine = () => {
-        this.debugLine.remove();
-        this.debugLine = undefined;
+    static belowSection = (pageNavObj, section) => {
+        if (!Section.exist(section)) return false;
+        return this.position(pageNavObj) > this.posYFromPageTop(section) + section.offsetHeight;
     };
 
-    createDebugLine = () => {
-        let debugLine = document.createElement("div");
-        debugLine.classList.add("debugLine");
-        debugLine.setAttribute("style", `position: fixed;width: 100%;background: #ff00007a;height: 4px;transition: .6s; top:50%;`);
-        this.debugLine = debugLine;
-        this.updateDebugLineOffset();
-        document.body.appendChild(debugLine);
+    static belowSectionOffsetTop = (pageNavObj, section) => {
+        if (!Section.exist(section)) return false;
+        return this.position(pageNavObj) > this.posYFromPageTop(section);
     };
 
-    updateDebugLineOffset = () => {
+    static aboveSection = (pageNavObj, section) => {
+        if (!Section.exist(section)) return false;
+        return this.position(pageNavObj) < this.posYFromPageTop(section);
+    };
+
+    static aboveSectionOffsetBottom = (pageNavObj, section) => {
+        if (!Section.exist(section)) return false;
+        return this.position(pageNavObj) < this.posYFromPageTop(section) + section.offsetHeight;
+    };
+
+    static passedBeginningOfFirstArticle = (pageNavObj) => {
+        return this.position(pageNavObj) > pageNavObj.sections.at(0).getBoundingClientRect().top + document.documentElement.scrollTop;
+    };
+
+    static exactlyInsideSection = (pageNavObj, section) => {
+        return this.belowSectionOffsetTop(pageNavObj, section) && this.aboveSectionOffsetBottom(pageNavObj, section);
+    };
+
+    static posYFromPageTop = (section) => {
+        return section.getBoundingClientRect().top + document.documentElement.scrollTop;
+    };
+}
+
+class Section {
+    static exist = (section) => {
+        return section ? true : false;
+    };
+
+    static hasChanged = ({ currentSection, previousSection }) => {
+        return currentSection != previousSection;
+    };
+
+    static noneActive = ({ currentSection }) => {
+        return currentSection == undefined;
+    };
+}
+
+class DebugLine {
+    constructor({ changeOffset }) {
+        this.changeOffset = changeOffset;
+        this.update();
+    }
+
+    update(show) {
+        if (show) {
+            this.debugLine ? this.updateOffset() : this.createBar();
+        } else {
+            this.remove();
+        }
+    }
+
+    createBar = () => {
+        this.debugLine = document.createElement("div");
+        this.debugLine.classList.add("debugLine");
+        this.debugLine.setAttribute("style", `position: fixed;width: 100%;background: #ff00007a;height: 4px;transition: .6s; top:50%;`);
+        document.body.appendChild(this.debugLine);
+    };
+
+    remove = () => {
+        if (this.debugLine) {
+            this.debugLine.remove();
+            this.debugLine = undefined;
+        }
+    };
+
+    updateOffset = () => {
         this.debugLine.style.top = `calc(${this.changeOffset}% - 2px)`;
     };
 }
