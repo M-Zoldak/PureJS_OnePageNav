@@ -24,14 +24,14 @@ pre {
 }
 
 @mixin glassBox() {
-    background: rgba(255, 255, 255, 0.68);
+    background: rgba(255, 255, 255, 0.58);
     border-radius: 16px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.34);
     @media (max-width: 768px) {
-        background: rgba(255, 255, 255, 0.83);
+        background: rgba(255, 255, 255, 0.78);
     }
 }
 
@@ -46,7 +46,10 @@ nav {
     text-transform: uppercase;
     top: 1rem;
     left: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
     @include glassBox();
+    z-index: 5;
 }
 
 ul {
@@ -226,6 +229,7 @@ section.active > span::after {
     gap: 0.3rem;
     padding: 1rem;
     transition: 0.6s;
+    z-index: 10;
 
     @include glassBox();
 
