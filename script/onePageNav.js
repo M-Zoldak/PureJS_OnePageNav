@@ -253,7 +253,7 @@ class onePageNav {
 
     handleDebugLine = () => {
         if (!this.debugLine) this.debugLine = new DebugLine(this);
-        this.debugLine.update(this.showDebugLine);
+        this.debugLine.update(this);
     };
 }
 
@@ -310,20 +310,23 @@ class Section {
 }
 
 class DebugLine {
-    constructor({ changeOffset }) {
-        this.changeOffset = changeOffset;
-        this.update();
+    constructor(onePageNav) {
+        this.update(onePageNav);
     }
 
-    update(show) {
-        if (show) {
-            this.debugLine ? this.updateOffset() : this.createBar();
+    update({ showDebugLine, changeOffset }) {
+        if (showDebugLine) {
+            this.debugLine ? this.updateOffset(changeOffset) : this.create();
         } else {
             this.remove();
         }
     }
 
-    createBar = () => {
+    updateOffset = (changeOffset) => {
+        this.debugLine.style.top = `calc(${changeOffset}% - 2px)`;
+    };
+
+    create = () => {
         this.debugLine = document.createElement("div");
         this.debugLine.classList.add("debugLine");
         this.debugLine.setAttribute("style", `position: fixed;width: 100%;background: #ff00007a;height: 4px;transition: .6s; top:50%;`);
@@ -335,9 +338,5 @@ class DebugLine {
             this.debugLine.remove();
             this.debugLine = undefined;
         }
-    };
-
-    updateOffset = () => {
-        this.debugLine.style.top = `calc(${this.changeOffset}% - 2px)`;
     };
 }
