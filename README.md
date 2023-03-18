@@ -2,7 +2,7 @@
 
 The PureJS_onePageNav library is designed to dynamically manage states of navigation links based on scroll offset. It comes with several options that allow customize page navigation working as intended.
 
-Main functionalities are:
+Main functionalities:
 - dynamically update nav links accordingly to reached section
 - update hash accordingly to nav link or section
 - choosing which link should be default active if none section reached
