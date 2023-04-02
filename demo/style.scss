@@ -14,7 +14,6 @@ html {
 
 body {
     height: 100vh;
-    // font-family: sans-serif;
     font-family: "Rubik", sans-serif;
     font-weight: 500;
 }
@@ -42,7 +41,6 @@ nav {
     justify-content: center;
     width: 250px;
     overflow: hidden;
-    // padding: 1rem 0.5rem;
     text-transform: uppercase;
     top: 1rem;
     left: 1rem;
@@ -101,26 +99,11 @@ section {
     font-weight: bolder;
     padding: 2rem;
     text-align: center;
-    transition: color 0.5s;
+    transition: color 0.5s, opacity 0.3s;
     letter-spacing: 0.025rem;
 
-    body:not(.sections-on) & {
-        color: #1b1b1b;
-    }
-
-    body.sections-on & {
-        color: #5d5d5d;
-        &.active {
-            color: #1b1b1b;
-        }
-    }
-
-    &:nth-child(2n):not(:last-child) {
-        height: 40vh;
-    }
-
     &:nth-child(3n):not(:last-child) {
-        height: 60vh;
+        min-height: 60vh;
     }
 
     span {
@@ -188,13 +171,10 @@ section {
     padding: 1rem;
     padding-top: 0;
     height: 120vh;
-    // background-color: #000;
-    // color: #fff;
 
     > span {
         height: 50%;
         justify-content: center;
-        // align-items: center;
     }
 
     > div {
@@ -205,12 +185,16 @@ section {
         height: 50%;
         justify-content: center;
         align-items: center;
+    }
+}
 
-        body.sections-on & {
-            color: #5d5d5d;
-            &.active {
-                color: #1b1b1b;
-            }
+#section-2 > div,
+section {
+    body.sections-on & {
+        color: #404040;
+
+        &.active {
+            color: #1b1b1b;
         }
     }
 }

@@ -1,7 +1,7 @@
 /**
  * @options
  * @param {string} navLinksSelector - selector targeting anchor tags
- * @param {string} anchorActiveClass - class name that will be added on anchor when section reached and alternatively on parents passes inside parentsObtainingActiveClass
+ * @param {string} navLinkActiveClass - class name that will be added on navigation link when section reached and alternatively on parents passes inside parentsObtainingActiveClass
  * @param {string} sectionActiveClass - class name that will be added on section when reached
  * @param {string} defaultActiveElement - selector to element(e.g. `<a>` tag), which obtain class active, if none section was reached (or active if exact match option is used)
  * @param {int} changeOffset - the distance from the top of the page that the next element must be scrolled to in order to be activated. Value given in precents (0-100)% - default (50)
@@ -33,7 +33,7 @@ class onePageNav {
         setClassesOnSections = false, 
         exactMatch = false, 
         allowedPaths = undefined, 
-        anchorActiveClass = "active", 
+        navLinkActiveClass = "active", 
         sectionActiveClass = "active", 
         defaultActiveElement = undefined, 
         updateHash = false, 
@@ -50,7 +50,7 @@ class onePageNav {
         this.setClassesOnSections = setClassesOnSections;
         this.exactMatch = exactMatch;
         this.allowedPaths = allowedPaths;
-        this.anchorActiveClass = anchorActiveClass;
+        this.navLinkActiveClass = navLinkActiveClass;
         this.sectionActiveClass = sectionActiveClass;
         this.defaultActiveElement = defaultActiveElement;
         this.updateHash = updateHash;
@@ -212,21 +212,21 @@ class onePageNav {
 
     addActiveClass = (aElement) => {
         if (this.updateATagClass) {
-            aElement.classList.add(this.anchorActiveClass);
+            aElement.classList.add(this.navLinkActiveClass);
         }
 
         this.parentsObtainingActiveClass.forEach((parentSelector) => {
-            aElement.closest(parentSelector).classList.add(this.anchorActiveClass);
+            aElement.closest(parentSelector).classList.add(this.navLinkActiveClass);
         });
     };
 
     removeActiveClass = (aElement) => {
         if (this.updateATagClass) {
-            aElement.classList.remove(this.anchorActiveClass);
+            aElement.classList.remove(this.navLinkActiveClass);
         }
 
         this.parentsObtainingActiveClass.forEach((parentSelector) => {
-            aElement.closest(parentSelector).classList.remove(this.anchorActiveClass);
+            aElement.closest(parentSelector).classList.remove(this.navLinkActiveClass);
         });
     };
 

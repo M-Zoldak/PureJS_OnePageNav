@@ -2,10 +2,10 @@
     "name": "purejs_onepagenav",
     "version": "1.0.0",
     "description": "Highly configurable one page navigation script",
-    "main": "index.html",
+    "main": "rollup.config.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "babel": "babel ./script/onePageNav.js --out-file ./script/onePageNav.min.js"
+        "dev": "rollup --config --bundleConfigAsCjs -w"
     },
     "keywords": [
         "pure",
@@ -17,13 +17,23 @@
         "one",
         "page",
         "nav",
-        "navigation"
+        "navigation",
+        "scroll",
+        "scrollspy",
+        "scroll-spy",
+        "spy"
     ],
     "author": "Mateusz Żołdak",
     "license": "MIT",
     "devDependencies": {
-        "@babel/cli": "^7.20.7",
         "@babel/core": "^7.20.12",
-        "@babel/preset-env": "^7.20.2"
+        "@babel/preset-env": "^7.21.4",
+        "@rollup/plugin-babel": "^6.0.3",
+        "@rollup/plugin-terser": "^0.4.0",
+        "postcss": "^8.4.21",
+        "postcss-preset-env": "^8.3.0",
+        "rollup": "^3.20.2",
+        "rollup-plugin-scss": "^3.0.0",
+        "sass": "^1.60.0"
     }
 }
