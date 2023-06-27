@@ -40,7 +40,7 @@ interface OnePageNavOptions {
  * @copyright Copyright (c) 2023 Mateusz Żołdak
  * @license licensed under MIT license
  */
-export class OnePageNav {
+class OnePageNav {
     public previousSection: HTMLElement | undefined;
     public currentSection: HTMLElement | undefined;
     public sections: Array<HTMLElement>;
@@ -70,7 +70,6 @@ export class OnePageNav {
 
     constructor(options: OnePageNavOptions) {
         this.options = { ...this.defaults, ...options } as OnePageNavOptions;
-        console.log(this.options);
         this.initialize();
     }
 
@@ -277,7 +276,7 @@ export class OnePageNav {
     };
 }
 
-export class Offset {
+class Offset {
     static position = ({ changeOffset }: OnePageNavOptions) => {
         return window.scrollY + window.innerHeight / (100 / changeOffset);
     };
@@ -326,7 +325,7 @@ export class Offset {
     };
 }
 
-export class Section {
+class Section {
     static exist = (section: HTMLElement) => {
         return section ? true : false;
     };
@@ -340,7 +339,7 @@ export class Section {
     };
 }
 
-export class DebugLine {
+class DebugLine {
     private debugLine: HTMLElement;
 
     constructor(onePageNav: OnePageNav) {
@@ -375,3 +374,6 @@ export class DebugLine {
         }
     };
 }
+
+export default OnePageNav;
+export { Offset, Section };

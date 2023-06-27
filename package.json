@@ -3,6 +3,10 @@
     "version": "1.0.0",
     "description": "Highly configurable one page navigation script",
     "author": "Mateusz Żołdak",
+    "main": "dist/OnePageNav.js",
+    "es2015": "dist/OnePageNav.min.js",
+    "mod": "dist/OnePageNav.module.js",
+    "umd": "dist/OnePageNav.umd.js",
     "type": "module",
     "license": "MIT",
     "scripts": {
@@ -34,6 +38,7 @@
         "@rollup/plugin-eslint": "^9.0.4",
         "@rollup/plugin-terser": "^0.4.3",
         "@rollup/plugin-typescript": "^11.1.1",
+        "@types/node": "^20.3.2",
         "eslint": "^8.38.0",
         "eslint-config-prettier": "^8.8.0",
         "eslint-plugin-prettier": "^4.2.1",
@@ -43,5 +48,8 @@
         "terser": "^5.18.1",
         "tslib": "^2.6.0",
         "typescript": "^5.1.3"
+    },
+    "dependencies": {
+        "purejs_onepagenav": "*"
     }
 }

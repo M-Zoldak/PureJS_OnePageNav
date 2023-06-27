@@ -39,7 +39,7 @@ interface OnePageNavOptions {
  * @copyright Copyright (c) 2023 Mateusz Żołdak
  * @license licensed under MIT license
  */
-export declare class OnePageNav {
+declare class OnePageNav {
     previousSection: HTMLElement | undefined;
     currentSection: HTMLElement | undefined;
     sections: Array<HTMLElement>;
@@ -81,7 +81,7 @@ export declare class OnePageNav {
     handleOnChangeCallbacks: () => void;
     handleDebugLine: () => void;
 }
-export declare class Offset {
+declare class Offset {
     static position: ({ changeOffset }: OnePageNavOptions) => number;
     static belowSection: (pageNavObj: OnePageNav, section: HTMLElement) => boolean;
     static belowSectionOffsetTop: (pageNavObj: OnePageNav, section: HTMLElement) => boolean;
@@ -91,17 +91,10 @@ export declare class Offset {
     static exactlyInsideSection: (pageNavObj: OnePageNav, section: HTMLElement) => boolean;
     static posYFromPageTop: (section: HTMLElement) => number;
 }
-export declare class Section {
+declare class Section {
     static exist: (section: HTMLElement) => boolean;
     static hasChanged: ({ currentSection, previousSection }: OnePageNav) => boolean;
     static noneActive: ({ currentSection }: OnePageNav) => boolean;
 }
-export declare class DebugLine {
-    private debugLine;
-    constructor(onePageNav: OnePageNav);
-    update({ debugLine, changeOffset }: OnePageNavOptions): void;
-    updateOffset: (changeOffset: number) => void;
-    create: () => void;
-    remove: () => void;
-}
-export {};
+export default OnePageNav;
+export { Offset, Section };

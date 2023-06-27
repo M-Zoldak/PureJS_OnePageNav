@@ -28,12 +28,13 @@ let prod = defineConfig([
     {
         input: 'src/OnePageNav.ts',
         output: {
-            dir: 'dist',
-            format: 'iife',
+            file: 'dist/OnePageNav.js',
+            format: 'es',
             name: 'OnePageNav',
+            exports: 'named',
         },
         plugins: [
-            cleandir(),
+            cleandir('dist'),
             typescript(),
             babel({
                 babelHelpers: 'bundled',
@@ -45,9 +46,10 @@ let prod = defineConfig([
     {
         input: 'src/OnePageNav.ts',
         output: {
-            format: 'iife',
+            format: 'es',
             file: 'dist/OnePageNav.min.js',
             name: 'OnePageNav',
+            exports: 'named',
         },
         plugins: [
             typescript(),
@@ -64,6 +66,7 @@ let prod = defineConfig([
         output: {
             format: 'umd',
             file: 'dist/OnePageNav.umd.js',
+            exports: 'named',
             name: 'OnePageNav',
         },
         plugins: [
