@@ -2,10 +2,13 @@
     "name": "purejs_onepagenav",
     "version": "1.0.0",
     "description": "Highly configurable one page navigation script",
-    "main": "rollup.config.js",
+    "author": "Mateusz Żołdak",
+    "type": "module",
+    "license": "MIT",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "rollup --config --bundleConfigAsCjs -w"
+        "dev": "rollup --config -w --dev",
+        "build": " rollup --config"
     },
     "keywords": [
         "pure",
@@ -23,17 +26,22 @@
         "scroll-spy",
         "spy"
     ],
-    "author": "Mateusz Żołdak",
-    "license": "MIT",
     "devDependencies": {
         "@babel/core": "^7.20.12",
         "@babel/preset-env": "^7.21.4",
+        "@babel/preset-typescript": "^7.22.5",
         "@rollup/plugin-babel": "^6.0.3",
-        "@rollup/plugin-terser": "^0.4.0",
-        "postcss": "^8.4.21",
-        "postcss-preset-env": "^8.3.0",
-        "rollup": "^3.20.2",
-        "rollup-plugin-scss": "^3.0.0",
-        "sass": "^1.60.0"
+        "@rollup/plugin-eslint": "^9.0.4",
+        "@rollup/plugin-terser": "^0.4.3",
+        "@rollup/plugin-typescript": "^11.1.1",
+        "eslint": "^8.38.0",
+        "eslint-config-prettier": "^8.8.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "prettier": "^2.8.7",
+        "rollup": "^3.25.3",
+        "rollup-plugin-cleandir": "^2.0.0",
+        "terser": "^5.18.1",
+        "tslib": "^2.6.0",
+        "typescript": "^5.1.3"
     }
 }

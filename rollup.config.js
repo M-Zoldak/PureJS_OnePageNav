@@ -1,36 +1,81 @@
-import babel from "@rollup/plugin-babel";
-import terser from "@rollup/plugin-terser";
-import { defineConfig } from "rollup";
-import scss from "rollup-plugin-scss";
-import postcss from "postcss";
-import postcssPresetEnv from "postcss-preset-env";
+import babel from '@rollup/plugin-babel';
+import terser from '@rollup/plugin-terser';
+import { defineConfig } from 'rollup';
+import typescript from '@rollup/plugin-typescript';
+import { cleandir } from 'rollup-plugin-cleandir';
 
-export default defineConfig([
+let dev = defineConfig([
     {
-        input: "script/onePageNav.js",
+        input: 'src/OnePageNav.ts',
         output: {
-            file: "script/onePageNav.min.js",
-            format: "es",
-        },
-        plugins: [babel({ babelHelpers: "bundled", presets: ["@babel/preset-env"] }), terser()],
-    },
-    {
-        input: "demo/index.js",
-        output: {
-            file: "demo/index.min.js",
-            format: "es",
+            dir: 'dist',
+            format: 'iife',
+            name: 'OnePageNav',
         },
         plugins: [
-            babel({ babelHelpers: "bundled", presets: ["@babel/preset-env"] }),
-            terser(),
-            scss({
-                output: "./demo/style.min.css",
-                runtime: require("sass"),
-                watch: "./demo/style.scss",
-                processor: () => postcss([postcssPresetEnv]),
-                outputStyle: "compressed",
-                sourceMap: true,
+            cleandir(),
+            typescript(),
+            babel({
+                babelHelpers: 'bundled',
+                presets: ['@babel/preset-env', '@babel/preset-typescript'],
+                targets: ['es2015'],
             }),
         ],
     },
 ]);
+
+let prod = defineConfig([
+    {
+        input: 'src/OnePageNav.ts',
+        output: {
+            dir: 'dist',
+            format: 'iife',
+            name: 'OnePageNav',
+        },
+        plugins: [
+            cleandir(),
+            typescript(),
+            babel({
+                babelHelpers: 'bundled',
+                presets: ['@babel/preset-env', '@babel/preset-typescript'],
+                targets: ['es2015'],
+            }),
+        ],
+    },
+    {
+        input: 'src/OnePageNav.ts',
+        output: {
+            format: 'iife',
+            file: 'dist/OnePageNav.min.js',
+            name: 'OnePageNav',
+        },
+        plugins: [
+            typescript(),
+            babel({
+                babelHelpers: 'bundled',
+                presets: ['@babel/preset-env', '@babel/preset-typescript'],
+                targets: ['es2015'],
+            }),
+            terser(),
+        ],
+    },
+    {
+        input: 'src/OnePageNav.ts',
+        output: {
+            format: 'umd',
+            file: 'dist/OnePageNav.umd.js',
+            name: 'OnePageNav',
+        },
+        plugins: [
+            typescript(),
+            babel({
+                babelHelpers: 'bundled',
+                presets: ['@babel/preset-env', '@babel/preset-typescript'],
+                targets: ['es2015'],
+            }),
+            terser(),
+        ],
+    },
+]);
+
+export default (commandLineArgs) => (commandLineArgs.dev === true ? dev : prod);

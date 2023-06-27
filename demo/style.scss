@@ -14,7 +14,7 @@ html {
 
 body {
     height: 100vh;
-    font-family: "Rubik", sans-serif;
+    font-family: 'Rubik', sans-serif;
     font-weight: 500;
 }
 
@@ -48,6 +48,33 @@ nav {
     padding-bottom: 0.5rem;
     @include glassBox();
     z-index: 5;
+
+    a {
+        display: flex;
+        color: rgba(0, 0, 0, 0.3);
+        justify-content: center;
+        text-decoration: none;
+        padding: 0.2em 0.4em;
+        transition: 0.2s;
+        text-transform: uppercase;
+
+        &.smaller {
+            font-size: 0.9em;
+            &.active {
+                font-size: 1.2em;
+            }
+        }
+
+        &.active {
+            font-size: 1.4em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.4rem;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: black;
+        }
+    }
 }
 
 ul {
@@ -60,33 +87,6 @@ li {
     overflow: hidden;
     &:last-child {
         margin-bottom: 0;
-    }
-}
-
-nav a {
-    display: flex;
-    color: rgba(0, 0, 0, 0.3);
-    justify-content: center;
-    text-decoration: none;
-    padding: 0.2em 0.4em;
-    transition: 0.2s;
-    text-transform: uppercase;
-
-    &.smaller {
-        font-size: 0.9em;
-        &.active {
-            font-size: 1.2em;
-        }
-    }
-
-    &.active {
-        font-size: 1.4em;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.4rem;
-        background-color: rgba(255, 255, 255, 0.9);
-        color: black;
     }
 }
 
@@ -113,13 +113,13 @@ section {
         font-size: 3rem;
 
         &::before {
-            content: "";
+            content: '';
             font-size: 1rem;
             height: 3em;
         }
 
         &::after {
-            content: "Active";
+            content: 'Active';
             font-size: 1rem;
             height: 0;
             text-decoration: none;
@@ -313,7 +313,7 @@ section.active > span::after {
 
     &::before {
         position: absolute;
-        content: "";
+        content: '';
         height: 16px;
         width: 16px;
         left: 3px;
