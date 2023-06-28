@@ -14,11 +14,44 @@ Main functionalities:
 -   visualization line for easier understanding
 -   changing options after script initialization
 
+## Getting Started
+
+### Installation
+
+`npm install purejs_onepagenav`
+
+### Including into project:
+
+```js
+import { OnePageNav, Offset, Section } from 'purejs_onepagenav';
+
+// Default constructor
+let options = {
+    navLinksSelector: 'nav a',
+    defaultLinkActive: true,
+    updateATagClass: true,
+    changeOffset: 50,
+    parentsObtainingActiveClass: [],
+    setClassesOnSections: false,
+    exactMatch: false,
+    navLinkActiveClass: 'active',
+    sectionActiveClass: 'active',
+    defaultActiveElement: undefined,
+    updateHash: false,
+    saveHashBetweenSections: true,
+    onInit: [],
+    onChange: [],
+    debugLine: false,
+};
+
+let onePageNav = new OnePageNav(options);
+```
+
 ## Useful links
 
-You can check out the demo version at [Github Pages](https://m-zoldak.github.io/PureJS_OnePageNav/demo/).
+[Check out the demo](https://m-zoldak.github.io/PureJS_OnePageNav/demo/)
 
-Initialization and script configuration can be found in the [wiki](https://github.com/m-zoldak/PureJS_OnePageNav/wiki/About).
+[Find more in Github wiki](https://github.com/m-zoldak/PureJS_OnePageNav/wiki/About)
 
 ## License
 
