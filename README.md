@@ -25,7 +25,7 @@ Main functionalities:
 ```js
 import { OnePageNav, Offset, Section } from 'purejs_onepagenav';
 
-// Default constructor
+// Default constructor options
 let options = {
     navLinksSelector: 'nav a',
     defaultLinkActive: true,
