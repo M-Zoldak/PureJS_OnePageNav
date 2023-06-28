@@ -18,7 +18,7 @@ document.querySelector('.mobile-button').addEventListener('click', function () {
 
 // Example of changing values at runtime
 
-let body = document.querySelector('body');
+let body = document.body;
 
 let sliderOptions = document.querySelectorAll('input[type="checkbox"]');
 

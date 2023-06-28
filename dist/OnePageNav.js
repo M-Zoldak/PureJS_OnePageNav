@@ -49,7 +49,6 @@ class OnePageNav {
     };
     constructor(options) {
         this.options = { ...this.defaults, ...options };
-        console.log(this.options);
         this.initialize();
     }
     /**
@@ -290,4 +289,4 @@ class DebugLine {
     };
 }
 
-export { Offset, Section, OnePageNav as default };
+export { Offset, OnePageNav, Section };

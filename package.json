@@ -2,13 +2,15 @@
     "name": "purejs_onepagenav",
     "version": "1.0.0",
     "description": "Highly configurable one page navigation script",
-    "author": "Mateusz Żołdak",
-    "main": "dist/OnePageNav.js",
-    "es2015": "dist/OnePageNav.min.js",
-    "mod": "dist/OnePageNav.module.js",
-    "umd": "dist/OnePageNav.umd.js",
+    "author": "Mateusz Żołdak <mateusz@zoldak.pl>",
+    "main": "dist/OnePageNav.min.js",
+    "browser": "dist/OnePageNav.umd.js",
     "type": "module",
     "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/M-Zoldak/PureJS_OnePageNav"
+    },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "rollup --config -w --dev",
@@ -28,7 +30,8 @@
         "scroll",
         "scrollspy",
         "scroll-spy",
-        "spy"
+        "spy",
+        "front-end"
     ],
     "devDependencies": {
         "@babel/core": "^7.20.12",
@@ -48,8 +51,5 @@
         "terser": "^5.18.1",
         "tslib": "^2.6.0",
         "typescript": "^5.1.3"
-    },
-    "dependencies": {
-        "purejs_onepagenav": "*"
     }
 }

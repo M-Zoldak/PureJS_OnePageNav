@@ -8,12 +8,12 @@ let dev = defineConfig([
     {
         input: 'src/OnePageNav.ts',
         output: {
-            dir: 'dist',
-            format: 'iife',
+            file: 'dist/OnePageNav.umd.js',
+            format: 'umd',
             name: 'OnePageNav',
         },
         plugins: [
-            cleandir(),
+            cleandir('dist'),
             typescript(),
             babel({
                 babelHelpers: 'bundled',
@@ -31,7 +31,6 @@ let prod = defineConfig([
             file: 'dist/OnePageNav.js',
             format: 'es',
             name: 'OnePageNav',
-            exports: 'named',
         },
         plugins: [
             cleandir('dist'),
@@ -45,30 +44,18 @@ let prod = defineConfig([
     },
     {
         input: 'src/OnePageNav.ts',
-        output: {
-            format: 'es',
-            file: 'dist/OnePageNav.min.js',
-            name: 'OnePageNav',
-            exports: 'named',
-        },
-        plugins: [
-            typescript(),
-            babel({
-                babelHelpers: 'bundled',
-                presets: ['@babel/preset-env', '@babel/preset-typescript'],
-                targets: ['es2015'],
-            }),
-            terser(),
+        output: [
+            {
+                format: 'es',
+                file: 'dist/OnePageNav.min.js',
+                name: 'OnePageNav',
+            },
+            {
+                format: 'umd',
+                file: 'dist/OnePageNav.umd.js',
+                name: 'OnePageNav',
+            },
         ],
-    },
-    {
-        input: 'src/OnePageNav.ts',
-        output: {
-            format: 'umd',
-            file: 'dist/OnePageNav.umd.js',
-            exports: 'named',
-            name: 'OnePageNav',
-        },
         plugins: [
             typescript(),
             babel({
