@@ -96,4 +96,5 @@ declare class Section {
     static hasChanged: ({ currentSection, previousSection }: OnePageNav) => boolean;
     static noneActive: ({ currentSection }: OnePageNav) => boolean;
 }
-export { OnePageNav, Offset, Section };
+export default OnePageNav;
+export { Offset, Section };

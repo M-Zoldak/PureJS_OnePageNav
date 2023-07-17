@@ -54,6 +54,7 @@ let prod = defineConfig([
                 format: 'umd',
                 file: 'dist/OnePageNav.umd.js',
                 name: 'OnePageNav',
+                exports: 'named',
             },
         ],
         plugins: [

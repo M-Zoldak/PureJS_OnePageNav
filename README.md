@@ -18,12 +18,14 @@ Main functionalities:
 
 ### Installation
 
-`npm install purejs_onepagenav`
+```sh
+npm install purejs_onepagenav
+```
 
 ### Including into project:
 
 ```js
-import { OnePageNav, Offset, Section } from 'purejs_onepagenav';
+import OnePageNav from 'purejs_onepagenav';
 
 // Default constructor options
 let options = {
@@ -45,6 +47,10 @@ let options = {
 };
 
 let onePageNav = new OnePageNav(options);
+
+//or
+
+new OnePageNav.default(); // for alone imported umd file
 ```
 
 ## Useful links

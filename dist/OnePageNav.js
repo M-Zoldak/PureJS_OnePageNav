@@ -288,4 +288,4 @@ class DebugLine {
     };
 }
 
-export { Offset, OnePageNav, Section };
+export { Offset, Section, OnePageNav as default };
