@@ -34,7 +34,7 @@ interface OnePageNavOptions {
  * @param {array} onChange - array with functions, that should be fired on change e.g. `onChange: [function1, function2]`, callback receives whole onePageNav object.
  * @param {boolean} debugLine - show debug line
  *
- * @link More about script - https://github.com/Matheoz-sys/PureJS_onePageNav/wiki/About
+ * @link More about script - https://github.com/Matheoz-sys/PureJS_OnePageNav/
  *
  * @copyright Copyright (c) 2023 Mateusz Żołdak
  * @license licensed under MIT license

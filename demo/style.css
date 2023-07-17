@@ -48,20 +48,6 @@ nav {
     background: rgba(255, 255, 255, 0.78);
   }
 }
-
-ul {
-  width: 100%;
-  list-style: none;
-}
-
-li {
-  margin-bottom: 0.3rem;
-  overflow: hidden;
-}
-li:last-child {
-  margin-bottom: 0;
-}
-
 nav a {
   display: flex;
   color: rgba(0, 0, 0, 0.3);
@@ -85,6 +71,19 @@ nav a.active {
   gap: 0.4rem;
   background-color: rgba(255, 255, 255, 0.9);
   color: black;
+}
+
+ul {
+  width: 100%;
+  list-style: none;
+}
+
+li {
+  margin-bottom: 0.3rem;
+  overflow: hidden;
+}
+li:last-child {
+  margin-bottom: 0;
 }
 
 section {

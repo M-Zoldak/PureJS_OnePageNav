@@ -51,7 +51,7 @@ let onePageNav = new OnePageNav(options);
 
 [Check out the demo](https://m-zoldak.github.io/PureJS_OnePageNav/demo/)
 
-[Find more in Github wiki](https://github.com/m-zoldak/PureJS_OnePageNav/wiki/About)
+[Find more in Github wiki](https://github.com/m-zoldak/PureJS_OnePageNav/wiki/Configuration)
 
 ## License
 

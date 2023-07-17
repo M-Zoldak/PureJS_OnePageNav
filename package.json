@@ -5,6 +5,7 @@
     "author": "Mateusz Żołdak <mateusz@zoldak.pl>",
     "main": "dist/OnePageNav.min.js",
     "browser": "dist/OnePageNav.umd.js",
+    "types": "dist/OnePageNav.d.ts",
     "type": "module",
     "license": "MIT",
     "repository": {
