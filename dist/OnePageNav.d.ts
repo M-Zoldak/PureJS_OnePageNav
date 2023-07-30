@@ -49,7 +49,7 @@ declare class OnePageNav {
     private navLinks;
     private debugLine?;
     defaults: OnePageNavOptions;
-    constructor(options: OnePageNavOptions);
+    constructor(options?: OnePageNavOptions);
     /**
      * @description use to change script behavior and initialize with new values
      * @param {string} key

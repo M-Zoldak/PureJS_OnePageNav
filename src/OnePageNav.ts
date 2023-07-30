@@ -68,7 +68,7 @@ class OnePageNav {
         debugLine: false,
     };
 
-    constructor(options: OnePageNavOptions) {
+    constructor(options?: OnePageNavOptions) {
         this.options = { ...this.defaults, ...options } as OnePageNavOptions;
         this.initialize();
     }
