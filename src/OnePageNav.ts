@@ -1,25 +1,29 @@
-interface OnePageNavOptions {
+type OnePageNavOptions = {
     [key: string]: any;
-    navLinksSelector: string;
-    navLinkActiveClass: string;
-    sectionActiveClass: string;
+    navLinksSelector?: string;
+    navLinkActiveClass?: string;
+    sectionActiveClass?: string;
     defaultActiveElement?: string;
-    changeOffset: number;
-    defaultLinkActive: boolean;
-    updateATagClass: boolean;
-    setClassesOnSections: boolean;
-    exactMatch: boolean;
-    updateHash: boolean;
-    saveHashBetweenSections: boolean;
-    parentsObtainingActiveClass: Array<string>;
-    onInit: Array<Function>;
-    onChange: Array<Function>;
-    debugLine: boolean;
+    changeOffset?: number;
+    defaultLinkActive?: boolean;
+    updateATagClass?: boolean;
+    setClassesOnSections?: boolean;
+    exactMatch?: boolean;
+    updateHash?: boolean;
+    saveHashBetweenSections?: boolean;
+    parentsObtainingActiveClass?: Array<string>;
+    onInit?: Array<Function>;
+    onChange?: Array<Function>;
+    debugLine?: boolean;
+};
+
+interface OnePageNavInterface {
+    options: OnePageNavOptions;
 }
 
 /**
- * @options
  * @param {string} navLinksSelector - selector targeting anchor tags
+ * @options
  * @param {string} navLinkActiveClass - class name that will be added on navigation link when section reached and alternatively on parents passes inside parentsObtainingActiveClass
  * @param {string} sectionActiveClass - class name that will be added on section when reached
  * @param {string} defaultActiveElement - selector to element(e.g. `<a>` tag), which obtain class active, if none section was reached (or active if exact match option is used)
@@ -40,7 +44,26 @@ interface OnePageNavOptions {
  * @copyright Copyright (c) 2023 Mateusz Żołdak
  * @license licensed under MIT license
  */
-class OnePageNav {
+
+let defaults = {
+    navLinksSelector: 'nav a',
+    defaultLinkActive: true,
+    updateATagClass: true,
+    changeOffset: 50,
+    parentsObtainingActiveClass: [],
+    setClassesOnSections: false,
+    exactMatch: false,
+    navLinkActiveClass: 'active',
+    sectionActiveClass: 'active',
+    defaultActiveElement: undefined,
+    updateHash: false,
+    saveHashBetweenSections: true,
+    onInit: [],
+    onChange: [],
+    debugLine: false,
+};
+
+class OnePageNav implements OnePageNavInterface {
     public previousSection: HTMLElement | undefined;
     public currentSection: HTMLElement | undefined;
     public sections: Array<HTMLElement>;
@@ -50,26 +73,14 @@ class OnePageNav {
     private navLinks: Array<HTMLAnchorElement>;
     private debugLine?: DebugLine;
 
-    public defaults: OnePageNavOptions = {
-        navLinksSelector: 'nav a',
-        defaultLinkActive: true,
-        updateATagClass: true,
-        changeOffset: 50,
-        parentsObtainingActiveClass: [],
-        setClassesOnSections: false,
-        exactMatch: false,
-        navLinkActiveClass: 'active',
-        sectionActiveClass: 'active',
-        defaultActiveElement: undefined,
-        updateHash: false,
-        saveHashBetweenSections: true,
-        onInit: [],
-        onChange: [],
-        debugLine: false,
-    };
+    constructor(options: OnePageNavOptions = defaults) {
+        if (options) {
+            options = Object.fromEntries(
+                Object.entries(options).filter(([value]) => value != undefined)
+            );
+        }
 
-    constructor(options?: OnePageNavOptions) {
-        this.options = { ...this.defaults, ...options } as OnePageNavOptions;
+        this.options = Object.assign({}, defaults, options);
         this.initialize();
     }
 
@@ -79,6 +90,7 @@ class OnePageNav {
      * @param {string} value
      */
     set = (key: string, value: any): void => {
+        console.log(key, value);
         this.options[key] = value;
         this.refresh();
     };
@@ -92,9 +104,13 @@ class OnePageNav {
     };
 
     initialize = () => {
-        this.findLinks();
+        if (!this.options.navLinksSelector)
+            throw new Error(
+                `navLinks selector has to be not empty string value! Current value: '${this.options.navLinksSelector}'`
+            );
+        this.findLinks(this.options.navLinksSelector);
 
-        // TODO Output problems in one
+        // TODO Resolve Errors output
         if (!this.navLinks) {
             console.debug(
                 'The selector did not match any elements - `' + this.options.navLinksSelector + '`'
@@ -103,26 +119,28 @@ class OnePageNav {
         }
 
         this.findRelatedSections();
+
         if (!this.sections) {
             console.debug('No sections found');
+        } else {
+            this.findElementDefaultActive();
+            this.handleDebugLine();
+            this.handleScrollListener();
+            this.handleOutput();
+            this.handleOnInitCallbacks();
         }
-
-        this.findElementDefaultActive();
-        this.handleDebugLine();
-        this.handleScrollListener();
-        this.handleOutput();
-        this.handleOnInitCallbacks();
     };
 
-    findLinks = () => {
-        this.navLinks = [
-            ...document.querySelectorAll(this.options.navLinksSelector),
-        ] as HTMLAnchorElement[];
+    findLinks = (selector: string) => {
+        this.navLinks = [...document.querySelectorAll(selector)] as HTMLAnchorElement[];
     };
 
     findRelatedSections = () => {
         let hashes = this.navLinks.map((el) => el.hash).filter((el) => el);
-        this.sections = [...document.querySelectorAll(hashes.join(', '))] as HTMLElement[];
+
+        if (hashes.length) {
+            this.sections = [...document.querySelectorAll(hashes.join(', '))] as HTMLElement[];
+        }
     };
 
     handleScrollListener = () => {
@@ -131,13 +149,14 @@ class OnePageNav {
     };
 
     handleOutput = () => {
-        this.updateCurrentSection(this.findCurrentSection());
+        let currentSection = this.findCurrentSection();
+        this.updateCurrentSection(currentSection);
 
         if (Section.hasChanged(this) || this.newlyInitialized) {
             this.newlyInitialized = false;
 
             this.clearClasses();
-            this.handleDefaultLinkActive();
+            if (this.options.defaultLinkActive) this.handleDefaultLinkActive();
             this.handleHash();
 
             if (!Section.noneActive(this)) this.handleOnChangeCallbacks();
@@ -166,7 +185,6 @@ class OnePageNav {
 
     updateCurrentSection = (newSection: Element | undefined) => {
         this.previousSection = this.currentSection;
-
         this.currentSection = (newSection as HTMLElement) ?? this.handleDefaultLinkActive();
     };
 
@@ -176,12 +194,12 @@ class OnePageNav {
         });
 
         this.sections.forEach((el) => {
-            el.classList.remove(this.options.sectionActiveClass);
+            el.classList.remove(this.options.sectionActiveClass ?? 'active');
         });
     };
 
     handleDefaultLinkActive = () => {
-        if (Section.noneActive(this) && this.options.defaultLinkActive) {
+        if (Section.noneActive(this)) {
             this.addActiveClass(this.elementDefaultActive ?? this.navLinks[0]);
         }
     };
@@ -208,7 +226,9 @@ class OnePageNav {
 
     handleSectionClasses = () => {
         if (this.options.setClassesOnSections && this.currentSection) {
-            this.currentSection.classList.add(this.options.sectionActiveClass);
+            this.currentSection.classList.add(
+                this.options.sectionActiveClass ?? defaults.sectionActiveClass
+            );
         }
     };
 
@@ -218,6 +238,7 @@ class OnePageNav {
             this.navLinks,
             this.currentSection.id
         );
+
         currentlyActiveLinks.forEach((activeLink: HTMLAnchorElement) =>
             this.addActiveClass(activeLink)
         );
@@ -229,21 +250,25 @@ class OnePageNav {
 
     addActiveClass = (aElement: HTMLElement) => {
         if (this.options.updateATagClass) {
-            aElement.classList.add(this.options.navLinkActiveClass);
+            aElement.classList.add(this.options.navLinkActiveClass ?? 'active');
         }
 
-        this.options.parentsObtainingActiveClass.forEach((parentSelector: string) => {
-            aElement.closest(parentSelector)?.classList.add(this.options.navLinkActiveClass);
+        this.options.parentsObtainingActiveClass?.forEach((parentSelector: string) => {
+            aElement
+                .closest(parentSelector)
+                ?.classList.add(this.options.navLinkActiveClass ?? 'active');
         });
     };
 
     removeActiveClass = (aElement: HTMLElement) => {
         if (this.options.updateATagClass) {
-            aElement.classList.remove(this.options.navLinkActiveClass);
+            aElement.classList.remove(this.options.navLinkActiveClass ?? 'active');
         }
 
-        this.options.parentsObtainingActiveClass.forEach((parentSelector: string) => {
-            aElement.closest(parentSelector)?.classList.remove(this.options.navLinkActiveClass);
+        this.options.parentsObtainingActiveClass?.forEach((parentSelector: string) => {
+            aElement
+                .closest(parentSelector)
+                ?.classList.remove(this.options.navLinkActiveClass ?? 'active');
         });
     };
 
@@ -270,13 +295,14 @@ class OnePageNav {
     };
 
     handleDebugLine = () => {
+        console.log(this.debugLine);
         if (!this.debugLine) this.debugLine = new DebugLine(this);
         this.debugLine.update(this.options);
     };
 }
 
 class Offset {
-    static position = ({ changeOffset }: OnePageNavOptions) => {
+    static position = ({ changeOffset = 50 }: OnePageNavOptions) => {
         return window.scrollY + window.innerHeight / (100 / changeOffset);
     };
 
@@ -339,7 +365,7 @@ class Section {
 }
 
 class DebugLine {
-    private debugLine: HTMLElement;
+    private debugLine: HTMLElement | undefined;
 
     constructor(onePageNav: OnePageNav) {
         this.update(onePageNav.options);
@@ -353,8 +379,10 @@ class DebugLine {
         }
     }
 
-    updateOffset = (changeOffset: number) => {
-        this.debugLine.style.top = `calc(${changeOffset}% - 2px)`;
+    updateOffset = (changeOffset: number | undefined) => {
+        if (this.debugLine) {
+            this.debugLine.style.top = `calc(${changeOffset}% - 2px)`;
+        }
     };
 
     create = () => {
@@ -370,9 +398,9 @@ class DebugLine {
     remove = () => {
         if (this.debugLine) {
             this.debugLine.remove();
+            this.debugLine = undefined;
         }
     };
 }
 
 export default OnePageNav;
-export { Offset, Section };

@@ -1,6 +1,6 @@
 /**
- * @options
  * @param {string} navLinksSelector - selector targeting anchor tags
+ * @options
  * @param {string} navLinkActiveClass - class name that will be added on navigation link when section reached and alternatively on parents passes inside parentsObtainingActiveClass
  * @param {string} sectionActiveClass - class name that will be added on section when reached
  * @param {string} defaultActiveElement - selector to element(e.g. `<a>` tag), which obtain class active, if none section was reached (or active if exact match option is used)
@@ -21,6 +21,23 @@
  * @copyright Copyright (c) 2023 Mateusz Żołdak
  * @license licensed under MIT license
  */
+let defaults = {
+    navLinksSelector: 'nav a',
+    defaultLinkActive: true,
+    updateATagClass: true,
+    changeOffset: 50,
+    parentsObtainingActiveClass: [],
+    setClassesOnSections: false,
+    exactMatch: false,
+    navLinkActiveClass: 'active',
+    sectionActiveClass: 'active',
+    defaultActiveElement: undefined,
+    updateHash: false,
+    saveHashBetweenSections: true,
+    onInit: [],
+    onChange: [],
+    debugLine: false,
+};
 class OnePageNav {
     previousSection;
     currentSection;
@@ -30,25 +47,11 @@ class OnePageNav {
     newlyInitialized;
     navLinks;
     debugLine;
-    defaults = {
-        navLinksSelector: 'nav a',
-        defaultLinkActive: true,
-        updateATagClass: true,
-        changeOffset: 50,
-        parentsObtainingActiveClass: [],
-        setClassesOnSections: false,
-        exactMatch: false,
-        navLinkActiveClass: 'active',
-        sectionActiveClass: 'active',
-        defaultActiveElement: undefined,
-        updateHash: false,
-        saveHashBetweenSections: true,
-        onInit: [],
-        onChange: [],
-        debugLine: false,
-    };
-    constructor(options) {
-        this.options = { ...this.defaults, ...options };
+    constructor(options = defaults) {
+        if (options) {
+            options = Object.fromEntries(Object.entries(options).filter(([value]) => value != undefined));
+        }
+        this.options = Object.assign({}, defaults, options);
         this.initialize();
     }
     /**
@@ -57,6 +60,7 @@ class OnePageNav {
      * @param {string} value
      */
     set = (key, value) => {
+        console.log(key, value);
         this.options[key] = value;
         this.refresh();
     };
@@ -68,8 +72,10 @@ class OnePageNav {
         this.initialize();
     };
     initialize = () => {
-        this.findLinks();
-        // TODO Output problems in one
+        if (!this.options.navLinksSelector)
+            throw new Error(`navLinks selector has to be not empty string value! Current value: '${this.options.navLinksSelector}'`);
+        this.findLinks(this.options.navLinksSelector);
+        // TODO Resolve Errors output
         if (!this.navLinks) {
             console.debug('The selector did not match any elements - `' + this.options.navLinksSelector + '`');
             return;
@@ -78,31 +84,35 @@ class OnePageNav {
         if (!this.sections) {
             console.debug('No sections found');
         }
-        this.findElementDefaultActive();
-        this.handleDebugLine();
-        this.handleScrollListener();
-        this.handleOutput();
-        this.handleOnInitCallbacks();
+        else {
+            this.findElementDefaultActive();
+            this.handleDebugLine();
+            this.handleScrollListener();
+            this.handleOutput();
+            this.handleOnInitCallbacks();
+        }
     };
-    findLinks = () => {
-        this.navLinks = [
-            ...document.querySelectorAll(this.options.navLinksSelector),
-        ];
+    findLinks = (selector) => {
+        this.navLinks = [...document.querySelectorAll(selector)];
     };
     findRelatedSections = () => {
         let hashes = this.navLinks.map((el) => el.hash).filter((el) => el);
-        this.sections = [...document.querySelectorAll(hashes.join(', '))];
+        if (hashes.length) {
+            this.sections = [...document.querySelectorAll(hashes.join(', '))];
+        }
     };
     handleScrollListener = () => {
         window.removeEventListener('scroll', this.handleOutput);
         window.addEventListener('scroll', this.handleOutput);
     };
     handleOutput = () => {
-        this.updateCurrentSection(this.findCurrentSection());
+        let currentSection = this.findCurrentSection();
+        this.updateCurrentSection(currentSection);
         if (Section.hasChanged(this) || this.newlyInitialized) {
             this.newlyInitialized = false;
             this.clearClasses();
-            this.handleDefaultLinkActive();
+            if (this.options.defaultLinkActive)
+                this.handleDefaultLinkActive();
             this.handleHash();
             if (!Section.noneActive(this))
                 this.handleOnChangeCallbacks();
@@ -135,11 +145,11 @@ class OnePageNav {
             this.removeActiveClass(link);
         });
         this.sections.forEach((el) => {
-            el.classList.remove(this.options.sectionActiveClass);
+            el.classList.remove(this.options.sectionActiveClass ?? 'active');
         });
     };
     handleDefaultLinkActive = () => {
-        if (Section.noneActive(this) && this.options.defaultLinkActive) {
+        if (Section.noneActive(this)) {
             this.addActiveClass(this.elementDefaultActive ?? this.navLinks[0]);
         }
     };
@@ -159,7 +169,7 @@ class OnePageNav {
     };
     handleSectionClasses = () => {
         if (this.options.setClassesOnSections && this.currentSection) {
-            this.currentSection.classList.add(this.options.sectionActiveClass);
+            this.currentSection.classList.add(this.options.sectionActiveClass ?? defaults.sectionActiveClass);
         }
     };
     addActiveClassesOnNavigationLinks = () => {
@@ -173,18 +183,22 @@ class OnePageNav {
     };
     addActiveClass = (aElement) => {
         if (this.options.updateATagClass) {
-            aElement.classList.add(this.options.navLinkActiveClass);
+            aElement.classList.add(this.options.navLinkActiveClass ?? 'active');
         }
-        this.options.parentsObtainingActiveClass.forEach((parentSelector) => {
-            aElement.closest(parentSelector)?.classList.add(this.options.navLinkActiveClass);
+        this.options.parentsObtainingActiveClass?.forEach((parentSelector) => {
+            aElement
+                .closest(parentSelector)
+                ?.classList.add(this.options.navLinkActiveClass ?? 'active');
         });
     };
     removeActiveClass = (aElement) => {
         if (this.options.updateATagClass) {
-            aElement.classList.remove(this.options.navLinkActiveClass);
+            aElement.classList.remove(this.options.navLinkActiveClass ?? 'active');
         }
-        this.options.parentsObtainingActiveClass.forEach((parentSelector) => {
-            aElement.closest(parentSelector)?.classList.remove(this.options.navLinkActiveClass);
+        this.options.parentsObtainingActiveClass?.forEach((parentSelector) => {
+            aElement
+                .closest(parentSelector)
+                ?.classList.remove(this.options.navLinkActiveClass ?? 'active');
         });
     };
     findElementDefaultActive = () => {
@@ -206,13 +220,14 @@ class OnePageNav {
         });
     };
     handleDebugLine = () => {
+        console.log(this.debugLine);
         if (!this.debugLine)
             this.debugLine = new DebugLine(this);
         this.debugLine.update(this.options);
     };
 }
 class Offset {
-    static position = ({ changeOffset }) => {
+    static position = ({ changeOffset = 50 }) => {
         return window.scrollY + window.innerHeight / (100 / changeOffset);
     };
     static belowSection = (pageNavObj, section) => {
@@ -273,7 +288,9 @@ class DebugLine {
         }
     }
     updateOffset = (changeOffset) => {
-        this.debugLine.style.top = `calc(${changeOffset}% - 2px)`;
+        if (this.debugLine) {
+            this.debugLine.style.top = `calc(${changeOffset}% - 2px)`;
+        }
     };
     create = () => {
         this.debugLine = document.createElement('div');
@@ -284,8 +301,9 @@ class DebugLine {
     remove = () => {
         if (this.debugLine) {
             this.debugLine.remove();
+            this.debugLine = undefined;
         }
     };
 }
 
-export { Offset, Section, OnePageNav as default };
+export { OnePageNav as default };

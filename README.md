@@ -22,14 +22,19 @@ Main functionalities:
 npm install purejs_onepagenav
 ```
 
-### Including into project:
+## Useful links
+
+[Check out the demo](https://m-zoldak.github.io/PureJS_OnePageNav/demo/)
+
+[Find more in Github wiki](https://github.com/m-zoldak/PureJS_OnePageNav/wiki/Configuration)
+
+## Including into project and default values:
 
 ```js
 import OnePageNav from 'purejs_onepagenav';
 
 // Default constructor options
 let options = {
-    navLinksSelector: 'nav a',
     defaultLinkActive: true,
     updateATagClass: true,
     changeOffset: 50,
@@ -46,18 +51,12 @@ let options = {
     debugLine: false,
 };
 
-let onePageNav = new OnePageNav(options);
+let onePageNav = new OnePageNav('nav a', options);
 
 //or
 
 new OnePageNav.default(); // for alone imported umd file
 ```
-
-## Useful links
-
-[Check out the demo](https://m-zoldak.github.io/PureJS_OnePageNav/demo/)
-
-[Find more in Github wiki](https://github.com/m-zoldak/PureJS_OnePageNav/wiki/Configuration)
 
 ## License
 

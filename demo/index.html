@@ -121,7 +121,7 @@
                 <span>The end</span>
                 <p>
                     <a href="https://github.com/M-Zoldak/PureJS_OnePageNav" target="_blank">
-                        <strong><i class="fa-brands fa-github"></i> Github Wiki</strong>
+                        <strong><i class="fa-brands fa-github"></i> Github</strong>
                     </a>
                 </p>
             </section>
@@ -159,7 +159,7 @@
             </div>
             <div class="switch-box">
                 <label
-                    >Keep hash from section above<br />
+                    >Keep hash from previous section<br />
                     <pre>works only with exact matching on</pre>
                 </label>
                 <label class="switch">
@@ -176,7 +176,7 @@
                 </label>
             </div>
             <div class="switch-box">
-                <label>Sections obtain active class</label>
+                <label>Sections (with matched hash) obtain active class</label>
                 <label class="switch">
                     <input type="checkbox" name="setClassesOnSections" />
                     <span class="slider round"></span>
@@ -191,10 +191,10 @@
             </div>
         </div>
 
-        <script src="./index.js"></script>
         <script src="../dist/OnePageNav.umd.js"></script>
+        <script src="./index.js"></script>
         <script>
-            let onePageNav = new OnePageNav.default();
+            window.onePageNav = new OnePageNav.default();
         </script>
     </body>
 </html>

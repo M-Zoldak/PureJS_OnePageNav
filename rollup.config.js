@@ -4,7 +4,7 @@ import { defineConfig } from 'rollup';
 import typescript from '@rollup/plugin-typescript';
 import { cleandir } from 'rollup-plugin-cleandir';
 
-let dev = defineConfig([
+export default defineConfig([
     {
         input: 'src/OnePageNav.ts',
         output: {
@@ -22,9 +22,6 @@ let dev = defineConfig([
             }),
         ],
     },
-]);
-
-let prod = defineConfig([
     {
         input: 'src/OnePageNav.ts',
         output: {
@@ -69,4 +66,4 @@ let prod = defineConfig([
     },
 ]);
 
-export default (commandLineArgs) => (commandLineArgs.dev === true ? dev : prod);
+// export default (commandLineArgs) => (commandLineArgs.dev === true ? dev : prod);
