@@ -35,6 +35,7 @@ import OnePageNav from 'purejs_onepagenav';
 
 // Default constructor options
 let options = {
+    navLinksSelector: 'nav a',
     defaultLinkActive: true,
     updateATagClass: true,
     changeOffset: 50,
@@ -51,11 +52,17 @@ let options = {
     debugLine: false,
 };
 
-let onePageNav = new OnePageNav('nav a', options);
+let onePageNav = new OnePageNav(options);
 
 //or
 
 new OnePageNav.default(); // for alone imported umd file
+
+// For some other combination might be necessery
+
+import('purejs_onepagenav').then(() => {
+     new OnePageNav.default(options)
+})
 ```
 
 ## License

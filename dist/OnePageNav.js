@@ -149,7 +149,7 @@ class OnePageNav {
         });
     };
     handleDefaultLinkActive = () => {
-        if (Section.noneActive(this)) {
+        if (Section.noneActive(this) && this.options.defaultLinkActive) {
             this.addActiveClass(this.elementDefaultActive ?? this.navLinks[0]);
         }
     };
